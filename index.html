@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Westhaven Marina — Five-Year Occupancy Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --paper:#F1F3EF;
+    --paper-raised:#FFFFFF;
+    --ink:#16232A;
+    --muted:#5A6B6A;
+    --navy:#0C2333;
+    --navy-2:#123B4C;
+    --teal:#1C6E76;
+    --seafoam:#6FA88C;
+    --rust:#A8552E;
+    --brass:#B08A2E;
+    --line:#D9DED7;
+    --line-strong:#B9C2BB;
+    font-size:16px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#111815;
+      --paper-raised:#161F1C;
+      --ink:#EAEEE9;
+      --muted:#9AAAA3;
+      --navy:#081620;
+      --navy-2:#0E2B37;
+      --teal:#4FA3AC;
+      --seafoam:#7FB99C;
+      --rust:#C97A50;
+      --brass:#D3AE55;
+      --line:#2A332F;
+      --line-strong:#3A443F;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#111815;
+    --paper-raised:#161F1C;
+    --ink:#EAEEE9;
+    --muted:#9AAAA3;
+    --navy:#081620;
+    --navy-2:#0E2B37;
+    --teal:#4FA3AC;
+    --seafoam:#7FB99C;
+    --rust:#C97A50;
+    --brass:#D3AE55;
+    --line:#2A332F;
+    --line-strong:#3A443F;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .display{font-family:'Fraunces', Georgia, serif;}
+
+  /* Upload Section */
+  .upload-section{
+    max-width:920px;
+    margin:2rem auto;
+    padding:3rem 2rem;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:3px;
+    text-align:center;
+  }
+  .upload-content{
+    max-width:600px;
+    margin:0 auto;
+  }
+  .upload-icon{
+    font-size:3rem;
+    margin-bottom:1rem;
+  }
+  .upload-section h2{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.8rem;
+    margin:0 0 1rem;
+    color:var(--ink);
+  }
+  .upload-description{
+    color:var(--muted);
+    font-size:1rem;
+    line-height:1.6;
+    margin:0 0 2rem;
+  }
+  .upload-features{
+    display:flex;
+    justify-content:center;
+    gap:2rem;
+    margin-bottom:2rem;
+    flex-wrap:wrap;
+  }
+  .feature-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0.5rem;
+    font-size:0.85rem;
+    color:var(--muted);
+  }
+  .feature-icon{
+    font-size:1.5rem;
+  }
+  .file-input-wrapper{
+    position:relative;
+    display:inline-block;
+  }
+  .file-input-wrapper input[type="file"]{
+    position:absolute;
+    left:0;
+    top:0;
+    opacity:0;
+    width:100%;
+    height:100%;
+    cursor:pointer;
+  }
+  .file-input-btn{
+    display:inline-block;
+    padding:1rem 2rem;
+    background:var(--navy);
+    color:#EFF4F2;
+    border-radius:3px;
+    font-size:1rem;
+    font-weight:500;
+    cursor:pointer;
+    transition:background 0.2s;
+  }
+  .file-input-btn:hover{
+    background:var(--navy-2);
+  }
+  .file-name{
+    margin-top:1rem;
+    font-size:.85rem;
+    color:var(--muted);
+  }
+  .loading{
+    display:none;
+    margin-top:1rem;
+    color:var(--teal);
+    font-size:.9rem;
+  }
+  .error{
+    display:none;
+    margin-top:1rem;
+    color:var(--rust);
+    font-size:.85rem;
+    padding:0.5rem;
+    background:rgba(168,85,46,0.1);
+    border-radius:3px;
+  }
+
+  /* Report Container - initially hidden */
+  .report-container{
+    display:none;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    background:linear-gradient(160deg, var(--navy) 0%, var(--navy-2) 100%);
+    color:#EFF4F2;
+    overflow:hidden;
+    padding:3.4rem 1.5rem 3rem;
+  }
+  .hero-contours{
+    position:absolute; inset:0; opacity:.35; pointer-events:none;
+  }
+  .hero-inner{
+    position:relative;
+    max-width:920px;
+    margin:0 auto;
+  }
+  .hero-eyebrow{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:.8rem; letter-spacing:.02em; color:#AFC6C4;
+    border-bottom:1px solid rgba(255,255,255,.18);
+    padding-bottom:.9rem; margin-bottom:1.8rem;
+    flex-wrap:wrap; gap:.4rem;
+  }
+  .hero-title{
+    font-weight:500;
+    font-size:clamp(1.7rem, 4.2vw, 2.6rem);
+    line-height:1.15;
+    margin:0 0 1.9rem;
+    max-width:14ch;
+    color:#FBFBF9;
+  }
+  .hero-stat-row{
+    display:flex; gap:2.6rem; flex-wrap:wrap; align-items:flex-end;
+  }
+  .hero-stat-main .num{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size:clamp(3.6rem, 11vw, 6.4rem);
+    line-height:.95;
+    color:#FBFBF9;
+  }
+  .hero-stat-main .num sup{font-size:.4em; font-weight:500; top:-0.6em;}
+  .hero-stat-main .cap{
+    font-size:.88rem; color:#AFC6C4; margin-top:.5rem; max-width:26ch;
+  }
+  .hero-side-stats{
+    display:flex; gap:2.2rem; margin-left:auto; flex-wrap:wrap;
+  }
+  .hero-side-stats div{min-width:100px;}
+  .hero-side-stats .n{font-family:'Fraunces',serif; font-size:1.6rem; color:#FBFBF9;}
+  .hero-side-stats .l{font-size:.76rem; color:#AFC6C4; margin-top:.15rem;}
+
+  /* ---------- MAIN ---------- */
+  main{max-width:920px; margin:0 auto; padding:0 1.5rem 4rem;}
+
+  .filter-bar {
+    margin: 1.5rem auto 0;
+    padding: 1rem 1.5rem;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  #berthTypeCheckboxes {
+    max-height: 80px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) var(--paper);
+  }
+  
+  #berthTypeCheckboxes::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  #berthTypeCheckboxes::-webkit-scrollbar-track {
+    background: var(--paper);
+  }
+  
+  #berthTypeCheckboxes::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border-radius: 3px;
+  }
+
+  section{margin-bottom:3.4rem;}
+  section + section{padding-top:0;}
+
+  h2.section-head{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.5rem;
+    margin:0 0 .3rem;
+    color:var(--ink);
+  }
+  .section-sub{
+    color:var(--muted); font-size:.92rem; margin:0 0 1.4rem; max-width:60ch;
+  }
+
+  .lede{
+    font-size:1.12rem; line-height:1.65; max-width:66ch; color:var(--ink);
+  }
+  .lede strong{font-weight:600; color:var(--ink);}
+  .callout-list{
+    list-style:none; margin:1.6rem 0 0; padding:0;
+    display:grid; gap:.9rem;
+  }
+  .callout-list li{
+    display:grid; grid-template-columns:3px 1fr; gap:.9rem;
+    font-size:.98rem; line-height:1.55; color:var(--ink);
+  }
+  .callout-list li span.bar{background:var(--line-strong); border-radius:2px;}
+  .callout-list li.up span.bar{background:var(--seafoam);}
+  .callout-list li.down span.bar{background:var(--rust);}
+  .callout-list li b{font-weight:600;}
+
+  .chart-card{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:1.6rem 1.5rem 1.2rem;
+  }
+  .chart-card .cc-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:1.1rem; flex-wrap:wrap; gap:.4rem;
+  }
+  .chart-card .cc-head h3{
+    font-family:'Fraunces', serif; font-weight:500; font-size:1.1rem; margin:0; color:var(--ink);
+  }
+  .chart-card .cc-head .note{font-size:.8rem; color:var(--muted);}
+  .chart-wrap{position:relative; height:280px;}
+  .chart-wrap.short{height:220px;}
+  .svg-chart{width:100%; height:100%; display:block;}
+  .svg-chart svg{width:100%; height:100%; display:block; overflow:visible;}
+  .chart-foot{
+    font-size:.78rem; color:var(--muted); margin-top:.9rem; padding-top:.7rem;
+    border-top:1px solid var(--line);
+  }
+
+  /* legend chips */
+  .legend-row{display:flex; flex-wrap:wrap; gap:1rem; margin-top:.9rem;}
+  .legend-chip{display:flex; align-items:center; gap:.4rem; font-size:.8rem; color:var(--muted);}
+  .legend-chip i{width:10px; height:10px; border-radius:2px; display:inline-block;}
+
+  /* table */
+  table.inv{width:100%; border-collapse:collapse; font-size:.92rem;}
+  table.inv th{
+    text-align:left; font-weight:500; color:var(--muted); font-size:.76rem;
+    padding:.55rem .6rem; border-bottom:1px solid var(--line-strong);
+  }
+  table.inv td{padding:.65rem .6rem; border-bottom:1px solid var(--line);}
+  table.inv tr:last-child td{border-bottom:none;}
+  table.inv td.num, table.inv th.num{text-align:right; font-variant-numeric:tabular-nums;}
+  .occ-bar-wrap{display:flex; align-items:center; gap:.6rem;}
+  .occ-bar{flex:1; height:6px; background:var(--line); border-radius:3px; overflow:hidden; min-width:70px;}
+  .occ-bar > span{display:block; height:100%; background:var(--teal); border-radius:3px;}
+  .occ-bar.low > span{background:var(--rust);}
+  .occ-bar.mid > span{background:var(--brass);}
+
+  footer{
+    max-width:920px; margin:0 auto; padding:0 1.5rem 3.5rem;
+    color:var(--muted); font-size:.8rem; line-height:1.6;
+    border-top:1px solid var(--line); padding-top:1.6rem;
+  }
+
+  @media (max-width:640px){
+    .hero{padding:2.4rem 1.2rem 2.2rem;}
+    main{padding:2.2rem 1.2rem 3rem;}
+    .hero-side-stats{margin-left:0;}
+    .chart-wrap{height:230px;}
+  }
+
+  /* Print Styles */
+  @media print {
+    body {
+      background: white !important;
+      color: black !important;
+    }
+    :root {
+      --paper: white !important;
+      --paper-raised: white !important;
+      --ink: black !important;
+      --muted: #333 !important;
+      --navy: #000 !important;
+      --navy-2: #000 !important;
+      --teal: #000 !important;
+      --seafoam: #000 !important;
+      --rust: #000 !important;
+      --brass: #000 !important;
+      --line: #ccc !important;
+      --line-strong: #999 !important;
+    }
+    .upload-section, .filter-bar {
+      display: none !important;
+    }
+    .hero {
+      background: white !important;
+      color: black !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .hero-contours {
+      display: none;
+    }
+    .hero-eyebrow {
+      color: #333 !important;
+      border-bottom-color: #000 !important;
+    }
+    .hero-title {
+      color: #000 !important;
+    }
+    .hero-stat-main .num {
+      color: #000 !important;
+    }
+    .hero-stat-main .cap {
+      color: #333 !important;
+    }
+    .hero-side-stats .n {
+      color: #000 !important;
+    }
+    .hero-side-stats .l {
+      color: #333 !important;
+    }
+    .chart-card {
+      border: 1px solid #000 !important;
+      page-break-inside: avoid;
+    }
+    section {
+      page-break-inside: avoid;
+    }
+    .svg-chart svg {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    table.inv {
+      border: 1px solid #000 !important;
+    }
+    table.inv th {
+      border-bottom: 2px solid #000 !important;
+    }
+    table.inv td {
+      border-bottom: 1px solid #ccc !important;
+    }
+    footer {
+      border-top: 1px solid #000 !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Upload Section -->
+<div class="upload-section" id="uploadSection">
+  <div class="upload-content">
+    <div class="upload-icon">📊</div>
+    <h2>Berth Occupancy Analytics</h2>
+    <p class="upload-description">
+      Upload your Excel file to generate occupancy reports with interactive charts, 
+      berth type filtering, and seasonal analysis.
+    </p>
+    <div class="upload-features">
+      <div class="feature-item">
+        <span class="feature-icon">📈</span>
+        <span>Interactive Charts</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🔍</span>
+        <span>Type Filtering</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">📅</span>
+        <span>Seasonal Analysis</span>
+      </div>
+    </div>
+    <div class="file-input-wrapper">
+      <button class="file-input-btn">Upload Excel File</button>
+      <input type="file" id="fileInput" accept=".xlsx,.xls" />
+    </div>
+    <div class="file-name" id="fileName"></div>
+    <div class="loading" id="loading">Processing data...</div>
+    <div class="error" id="error"></div>
+  </div>
+</div>
+
+<!-- Report Container -->
+<div class="report-container" id="reportContainer">
+
+<div class="hero">
+  <svg class="hero-contours" viewBox="0 0 920 340" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M-20,300 C 180,260 300,340 500,290 S 760,230 940,270" stroke="#EFF4F2" stroke-width="1" fill="none"/>
+    <path d="M-20,250 C 180,210 320,290 520,240 S 780,180 940,220" stroke="#EFF4F2" stroke-width="1" fill="none"/>
+    <path d="M-20,200 C 180,160 340,240 540,190 S 800,130 940,170" stroke="#EFF4F2" stroke-width="1" fill="none"/>
+    <path d="M-20,150 C 180,110 360,190 560,140 S 820,80 940,120" stroke="#EFF4F2" stroke-width="1" fill="none"/>
+  </svg>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span>Westhaven Marina · Berth Occupancy</span>
+      <span id="hero-period"></span>
+    </div>
+    <h1 class="hero-title">Five years of berth occupancy, at a glance</h1>
+    <div class="hero-stat-row">
+      <div class="hero-stat-main">
+        <div class="num" id="hero-num">—</div>
+        <div class="cap">Fleet-wide occupancy, <span id="hero-latest"></span></div>
+      </div>
+      <div class="hero-side-stats">
+        <div>
+          <div class="n" id="stat-berths">—</div>
+          <div class="l">berths tracked</div>
+        </div>
+        <div>
+          <div class="n" id="stat-peak">—</div>
+          <div class="l" id="stat-peak-label">five-year peak</div>
+        </div>
+        <div>
+          <div class="n" id="stat-categories">—</div>
+          <div class="l">berth categories</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filter Bar - stays visible after upload -->
+<div class="filter-bar" id="filterBar" style="display: none;">
+  <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <label style="font-size: 0.85rem; color: var(--muted); font-weight: 500;">Filter by berth type:</label>
+      <div id="berthTypeCheckboxes" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; max-height: 100px; overflow-y: auto; padding: 0.5rem; border: 1px solid var(--line); border-radius: 3px; background: var(--paper);">
+        <!-- Checkboxes will be populated dynamically -->
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <input type="checkbox" id="yearOnlyToggle" style="cursor: pointer;">
+      <label for="yearOnlyToggle" style="font-size: 0.85rem; color: var(--muted); cursor: pointer;">Show years only</label>
+    </div>
+    <button id="printBtn" style="padding: 0.5rem 1rem; background: var(--navy); color: #EFF4F2; border: none; border-radius: 3px; font-size: 0.85rem; cursor: pointer;">📄 Print Report</button>
+  </div>
+</div>
+
+<main>
+
+  <section id="summary">
+    <h2 class="section-head">What the numbers show</h2>
+    <p class="lede" id="summary-text">
+      Upload your data to see occupancy insights and trends.
+    </p>
+    <ul class="callout-list" id="callout-list">
+      <!-- Dynamic callouts will be inserted here -->
+    </ul>
+  </section>
+
+  <section id="trend">
+    <h2 class="section-head">Overall occupancy, month by month</h2>
+    <p class="section-sub">Fleet-wide occupancy across all berths, weighted by berth-days.</p>
+    <div class="chart-card">
+      <div class="cc-head">
+        <h3 id="trend-chart-title">Monthly Trend</h3>
+        <span class="note">monthly, all berth types</span>
+      </div>
+      <div class="chart-wrap"><div id="chartOverall" class="svg-chart"></div></div>
+      <div class="chart-foot" id="trend-chart-foot"></div>
+    </div>
+  </section>
+
+  <section id="bytype">
+    <h2 class="section-head">Occupancy by berth type, year over year</h2>
+    <p class="section-sub">Annual average for the major categories. Partial years may be included.</p>
+    <div class="chart-card">
+      <div class="cc-head">
+        <h3>Annual occupancy by category</h3>
+        <span class="note">%</span>
+      </div>
+      <div class="chart-wrap"><div id="chartByType" class="svg-chart"></div></div>
+      <div class="legend-row" id="typeLegend"></div>
+    </div>
+  </section>
+
+  <section id="season">
+    <h2 class="section-head">Seasonal pattern</h2>
+    <p class="section-sub">Average occupancy by calendar month, pooled across all years.</p>
+    <div class="chart-card">
+      <div class="cc-head">
+        <h3>Occupancy by month of year</h3>
+        <span class="note">all years combined</span>
+      </div>
+      <div class="chart-wrap short"><div id="chartSeason" class="svg-chart"></div></div>
+    </div>
+  </section>
+
+  <section id="inventory">
+    <h2 class="section-head">Current snapshot</h2>
+    <p class="section-sub" id="inv-sub">Berth count and occupancy by category, latest month on record.</p>
+    <div class="chart-card">
+      <table class="inv">
+        <thead>
+          <tr>
+            <th>Berth type</th>
+            <th class="num">Berths</th>
+            <th style="width:38%;">Occupancy</th>
+            <th class="num">%</th>
+          </tr>
+        </thead>
+        <tbody id="inv-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Occupancy is calculated as total occupied berth-days divided by total available berth-days for
+  each period, weighted across every berth in the category. Upload your own data to generate
+  customized reports.
+</footer>
+
+</div>
+
+<script>
+// Global data storage
+let DATA = null;
+let showYearsOnly = false; // Toggle for year-only display
+let selectedBerthTypes = new Set(); // Multiple berth type selection
+
+// Load demo data on page load
+window.addEventListener('DOMContentLoaded', () => {
+  // Don't auto-load demo data - let user choose
+  document.getElementById('uploadSection').style.display = 'block';
+  document.getElementById('reportContainer').style.display = 'none';
+});
+
+// Year-only toggle (in filter bar)
+document.getElementById('yearOnlyToggle').addEventListener('change', (e) => {
+  showYearsOnly = e.target.checked;
+  if (DATA) {
+    renderReport(); // Re-render with new display mode
+  }
+});
+
+// Print button
+document.getElementById('printBtn').addEventListener('click', () => {
+  window.print();
+});
+
+// File upload handling
+document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+
+
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  console.log('=== NEW FILE UPLOAD ===');
+  console.log('File selected:', file.name, file.size, 'bytes');
+  console.log('Last modified:', new Date(file.lastModified));
+  
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('error').style.display = 'none';
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      console.log('File loaded, size:', e.target.result.byteLength, 'bytes');
+      console.log('Processing workbook...');
+      
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      
+      console.log('Workbook loaded, sheets:', workbook.SheetNames);
+      
+      // Clear previous data explicitly
+      console.log('Clearing previous data...');
+      DATA = null;
+      
+      // Process the workbook
+      processWorkbook(workbook);
+      
+      // Verify data was updated
+      console.log('Data after processing:', DATA ? 'DATA exists' : 'DATA is null');
+      if (DATA && DATA.overall && DATA.overall.length > 0) {
+        console.log('Sample of new data:', {
+          firstValue: DATA.overall[0],
+          lastValue: DATA.overall[DATA.overall.length - 1],
+          totalPoints: DATA.overall.length
+        });
+      }
+      
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('uploadSection').style.display = 'none';
+      document.getElementById('reportContainer').style.display = 'block';
+    } catch (error) {
+      console.error('Error processing file:', error);
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error').style.display = 'block';
+      document.getElementById('error').textContent = 'Error processing file: ' + error.message;
+    }
+  };
+  
+  reader.onerror = function(error) {
+    console.error('FileReader error:', error);
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error').style.display = 'block';
+    document.getElementById('error').textContent = 'Error reading file: ' + error;
+  };
+  
+  reader.readAsArrayBuffer(file);
+}
+
+function processWorkbook(workbook) {
+  try {
+    console.log('=== PROCESSING WORKBOOK ===');
+    
+    // Get the first sheet
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    
+    console.log('Processing sheet:', sheetName);
+    
+    // Convert to JSON
+    const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    
+    console.log('Excel data rows:', jsonData.length);
+    console.log('First row (headers):', jsonData[0]);
+    console.log('Sample data row 2:', jsonData[1]);
+    console.log('Sample data row 3:', jsonData[2]);
+    
+    // Clear previous data explicitly
+    DATA = null;
+    console.log('Previous data cleared');
+    
+    // Parse the data based on expected structure
+    DATA = parseExcelData(jsonData);
+    
+    if (!DATA) {
+      throw new Error('Failed to parse Excel data');
+    }
+    
+    console.log('=== PARSED DATA SUMMARY ===');
+    console.log('Total months:', DATA.labels.length);
+    console.log('Date range:', DATA.start_date, 'to', DATA.end_date);
+    console.log('Current occupancy:', DATA.current_overall);
+    console.log('Peak occupancy:', DATA.peak_overall, 'in', DATA.peak_date);
+    console.log('Berth types:', Object.keys(DATA.berthTypes));
+    console.log('Sample overall values:', DATA.overall.slice(0, 5));
+    
+    // Populate berth type dropdown
+    populateBerthTypeDropdown();
+    
+    // Show filter bar
+    document.getElementById('filterBar').style.display = 'flex';
+    
+    // Render the report
+    renderReport();
+  } catch (error) {
+    console.error('Error processing workbook:', error);
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error').style.display = 'block';
+    document.getElementById('error').textContent = 'Error processing Excel data: ' + error.message;
+  }
+}
+
+function parseExcelData(jsonData) {
+  // Parse berth-level data and aggregate to monthly
+  if (!jsonData || jsonData.length === 0) {
+    console.error('No data found in Excel file');
+    return null;
+  }
+  
+  const headers = jsonData[0];
+  console.log('Excel headers:', headers);
+  
+  // Find column indices
+  const berthCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('berth') && !h.toString().toLowerCase().includes('berthtype'));
+  const berthTypeCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('berthtype'));
+  const yearCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('year'));
+  const monthCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('month'));
+  const occupiedDaysCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('occupieddays'));
+  const daysInMonthCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('daysinmonth'));
+  const occupancyPercentCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('occupancypercent'));
+  
+  console.log('Column indices:', { berthCol, berthTypeCol, yearCol, monthCol, occupiedDaysCol, daysInMonthCol, occupancyPercentCol });
+  
+  // Sample some raw data to verify file content
+  console.log('Sample raw rows:');
+  for (let i = 1; i <= Math.min(5, jsonData.length); i++) {
+    console.log(`Row ${i}:`, jsonData[i]);
+  }
+  
+  // Aggregate data by month and berth type
+  const monthlyData = {}; // Key: "YYYY-MM", Value: { totalOccupiedDays: 0, totalDaysInMonth: 0, berthTypes: { type: { occupied: 0, days: 0 } } }
+  const berthTypes = new Set();
+  const berthCounts = {}; // Key: berthType, Value: Set of unique berth IDs
+  
+  for (let i = 1; i < jsonData.length; i++) {
+    const row = jsonData[i];
+    if (!row || row.length === 0) continue;
+    
+    const berthId = row[berthCol];
+    const berthType = row[berthTypeCol];
+    const year = row[yearCol];
+    const month = row[monthCol];
+    const occupiedDays = parseFloat(row[occupiedDaysCol]) || 0;
+    const daysInMonth = parseFloat(row[daysInMonthCol]) || 0;
+    
+    if (!berthType || !year || !month) continue;
+    
+    const monthKey = `${year}-${String(month).padStart(2, '0')}`;
+    berthTypes.add(berthType);
+    
+    // Count unique berths for each type
+    if (!berthCounts[berthType]) {
+      berthCounts[berthType] = new Set();
+    }
+    if (berthId) {
+      berthCounts[berthType].add(berthId);
+    }
+    
+    if (!monthlyData[monthKey]) {
+      monthlyData[monthKey] = {
+        totalOccupiedDays: 0,
+        totalDaysInMonth: 0,
+        berthTypes: {}
+      };
+    }
+    
+    if (!monthlyData[monthKey].berthTypes[berthType]) {
+      monthlyData[monthKey].berthTypes[berthType] = {
+        occupiedDays: 0,
+        daysInMonth: 0
+      };
+    }
+    
+    monthlyData[monthKey].totalOccupiedDays += occupiedDays;
+    monthlyData[monthKey].totalDaysInMonth += daysInMonth;
+    monthlyData[monthKey].berthTypes[berthType].occupiedDays += occupiedDays;
+    monthlyData[monthKey].berthTypes[berthType].daysInMonth += daysInMonth;
+  }
+  
+  console.log('Total rows processed:', jsonData.length - 1);
+  console.log('Unique months found:', Object.keys(monthlyData).length);
+  console.log('Berth types found:', Array.from(berthTypes));
+  
+  // Convert to sorted monthly data
+  const sortedMonths = Object.keys(monthlyData).sort();
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  const data = {
+    labels: [],
+    overall: [],
+    berthTypes: {},
+    berthCounts: {}, // Store actual berth counts per type
+    total_berths: 0,
+    start_date: '',
+    end_date: '',
+    latest_date: '',
+    current_overall: undefined,
+    peak_overall: undefined,
+    peak_date: ''
+  };
+  
+  // Calculate total unique berths across all types
+  let totalUniqueBerths = 0;
+  berthTypes.forEach(type => {
+    const count = berthCounts[type] ? berthCounts[type].size : 0;
+    data.berthCounts[type] = count;
+    totalUniqueBerths += count;
+  });
+  data.total_berths = totalUniqueBerths;
+  
+  console.log('Berth counts per type:', data.berthCounts);
+  console.log('Total unique berths:', data.total_berths);
+  
+  // Initialize berth type arrays
+  berthTypes.forEach(type => {
+    data.berthTypes[type] = [];
+  });
+  
+  sortedMonths.forEach(monthKey => {
+    const [year, month] = monthKey.split('-');
+    const monthName = monthNames[parseInt(month) - 1];
+    const label = `${monthName} ${year}`; // Always store full labels
+    
+    data.labels.push(label);
+    
+    const monthData = monthlyData[monthKey];
+    const overallOccupancy = (monthData.totalOccupiedDays / monthData.totalDaysInMonth) * 100;
+    data.overall.push(overallOccupancy);
+    
+    // Calculate occupancy for each berth type
+    berthTypes.forEach(type => {
+      const typeData = monthData.berthTypes[type] || { occupiedDays: 0, daysInMonth: 0 };
+      const typeOccupancy = typeData.daysInMonth > 0 ? (typeData.occupiedDays / typeData.daysInMonth) * 100 : 0;
+      data.berthTypes[type].push(typeOccupancy);
+    });
+  });
+  
+  // Calculate statistics
+  if (data.overall.length > 0) {
+    data.current_overall = data.overall[data.overall.length - 1];
+    data.peak_overall = Math.max(...data.overall);
+    const peakIndex = data.overall.indexOf(data.peak_overall);
+    data.peak_date = data.labels[peakIndex] || '';
+    data.latest_date = data.labels[data.labels.length - 1] || '';
+    data.start_date = data.labels[0] || '';
+    data.end_date = data.labels[data.labels.length - 1] || '';
+  }
+  
+  console.log('Final parsed data:');
+  console.log('- Date range:', data.start_date, 'to', data.end_date);
+  console.log('- Current occupancy:', data.current_overall);
+  console.log('- Peak occupancy:', data.peak_overall);
+  console.log('- Latest berth type values:');
+  Object.entries(data.berthTypes).forEach(([type, values]) => {
+    console.log(`  ${type}: ${values[values.length - 1].toFixed(1)}%`);
+  });
+  
+  return data;
+}
+
+function formatDate(dateValue) {
+  // Handle various date formats
+  if (typeof dateValue === 'number') {
+    // Excel serial date
+    const date = new Date((dateValue - 25569) * 86400 * 1000);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+  } else if (typeof dateValue === 'string') {
+    // Try to parse string date
+    const date = new Date(dateValue);
+    if (!isNaN(date)) {
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+    }
+    return dateValue; // Return as-is if parsing fails
+  }
+  return String(dateValue);
+}
+
+function renderReport() {
+  if (!DATA) return;
+  
+  console.log('=== RENDERING REPORT ===');
+  console.log('DATA available:', !!DATA);
+  console.log('DATA.overall length:', DATA.overall ? DATA.overall.length : 'N/A');
+  console.log('Selected berth types:', Array.from(selectedBerthTypes));
+  
+  // Get filtered data based on selection
+  const filteredData = getFilteredData();
+  
+  console.log('Filtered data:', {
+    overallLength: filteredData.overall.length,
+    berthTypesKeys: Object.keys(filteredData.berthTypes),
+    current_overall: filteredData.current_overall
+  });
+  
+  // Update hero section with safe value handling
+  document.getElementById('hero-period').textContent = (DATA.start_date || '—') + ' – ' + (DATA.end_date || '—');
+  document.getElementById('hero-num').innerHTML = (filteredData.current_overall !== undefined ? filteredData.current_overall.toFixed(1) : '—') + '<sup>%</sup>';
+  document.getElementById('hero-latest').textContent = DATA.latest_date || '—';
+  
+  // Update berth count based on selection
+  if (selectedBerthTypes.size === Object.keys(DATA.berthTypes).length) {
+    document.getElementById('stat-berths').textContent = (DATA.total_berths || 0).toLocaleString();
+  } else {
+    // Sum berth counts for selected types
+    let totalSelectedBerths = 0;
+    selectedBerthTypes.forEach(type => {
+      totalSelectedBerths += DATA.berthCounts[type] || 0;
+    });
+    document.getElementById('stat-berths').textContent = totalSelectedBerths.toLocaleString();
+  }
+  
+  document.getElementById('stat-peak').textContent = (filteredData.peak_overall !== undefined ? filteredData.peak_overall.toFixed(1) : '—') + '%';
+  document.getElementById('stat-peak-label').textContent = 'peak, ' + (filteredData.peak_date || '—');
+  document.getElementById('stat-categories').textContent = selectedBerthTypes.size;
+  
+  // Update summary
+  updateSummary();
+  
+  // Clear and update charts
+  console.log('Clearing chart containers...');
+  document.getElementById('chartOverall').innerHTML = '';
+  document.getElementById('chartByType').innerHTML = '';
+  document.getElementById('chartSeason').innerHTML = '';
+  document.getElementById('typeLegend').innerHTML = '';
+  
+  console.log('Rendering charts...');
+  renderOverallChart();
+  renderByTypeChart();
+  renderSeasonalChart();
+  
+  // Clear and update inventory table
+  document.getElementById('inv-body').innerHTML = '';
+  renderInventoryTable();
+  
+  console.log('=== REPORT RENDERING COMPLETE ===');
+}
+
+function updateSummary() {
+  console.log('Updating summary, total_berths:', DATA.total_berths);
+  
+  // Use a general introduction for all data
+  const summaryText = `
+    Welcome to the Berth Occupancy Analytics Dashboard. Upload your Excel data to generate 
+    customized reports showing occupancy patterns across berth types, seasonal variations, and trends. 
+    Use the filter controls to focus on specific categories and explore the interactive charts.
+  `;
+  document.getElementById('summary-text').innerHTML = summaryText;
+  
+  // Use general callouts about the dashboard features
+  const calloutList = document.getElementById('callout-list');
+  calloutList.innerHTML = `
+    <li>
+      <span class="bar"></span>
+      <span><b>Interactive Visualization.</b> Upload data to generate dynamic charts that update in real-time.</span>
+    </li>
+    <li>
+      <span class="bar"></span>
+      <span><b>Multi-dimensional Analysis.</b> Examine trends by berth type, time period, and seasonal patterns.</span>
+    </li>
+    <li>
+      <span class="bar"></span>
+      <span><b>Flexible Filtering.</b> Focus on specific categories or toggle between monthly and yearly views.</span>
+    </li>
+    <li>
+      <span class="bar"></span>
+      <span><b>Current Snapshot.</b> View occupancy rates across all berth categories at a glance.</span>
+    </li>
+  `;
+}
+
+function generateCallouts() {
+  const callouts = [];
+  const berthTypes = Object.entries(DATA.berthTypes);
+  
+  // Find best and worst performing categories
+  if (berthTypes.length > 0) {
+    const performance = berthTypes.map(([name, values]) => {
+      const first = values[0] || 0;
+      const last = values[values.length - 1] || 0;
+      const change = last - first;
+      return { name, change, first, last };
+    });
+    
+    performance.sort((a, b) => b.change - a.change);
+    
+    // Best performer
+    if (performance.length > 0) {
+      const best = performance[0];
+      callouts.push({
+        trend: best.change > 0 ? 'up' : 'down',
+        title: `${best.name} ${best.change > 0 ? 'showing growth' : 'in decline'}.`,
+        text: `Occupancy ${best.change > 0 ? 'increased' : 'decreased'} from ${best.first.toFixed(1)}% to ${best.last.toFixed(1)}% over the period.`
+      });
+    }
+    
+    // Worst performer
+    if (performance.length > 1) {
+      const worst = performance[performance.length - 1];
+      callouts.push({
+        trend: worst.change < 0 ? 'down' : 'up',
+        title: `${worst.name} ${worst.change < 0 ? 'struggling' : 'performing well'}.`,
+        text: `Occupancy ${worst.change < 0 ? 'dropped' : 'rose'} from ${worst.first.toFixed(1)}% to ${worst.last.toFixed(1)}%.`
+      });
+    }
+  }
+  
+  // Overall trend
+  const overallChange = DATA.current_overall - DATA.overall[0];
+  callouts.push({
+    trend: overallChange >= 0 ? 'up' : 'down',
+    title: 'Overall fleet trend.',
+    text: `Fleet-wide occupancy ${overallChange >= 0 ? 'increased' : 'decreased'} by ${Math.abs(overallChange).toFixed(1)} percentage points from ${DATA.overall[0].toFixed(1)}% to ${DATA.current_overall.toFixed(1)}%.`
+  });
+  
+  return callouts;
+}
+
+function populateBerthTypeDropdown() {
+  const container = document.getElementById('berthTypeCheckboxes');
+  container.innerHTML = '';
+  
+  // Add "Select All" checkbox
+  const selectAllDiv = document.createElement('div');
+  selectAllDiv.style.display = 'flex';
+  selectAllDiv.style.alignItems = 'center';
+  selectAllDiv.style.gap = '0.3rem';
+  selectAllDiv.style.marginRight = '0.5rem';
+  selectAllDiv.style.paddingRight = '0.5rem';
+  selectAllDiv.style.borderRight = '1px solid var(--line)';
+  
+  const selectAllCheckbox = document.createElement('input');
+  selectAllCheckbox.type = 'checkbox';
+  selectAllCheckbox.id = 'selectAllBerths';
+  selectAllCheckbox.checked = true;
+  selectAllCheckbox.style.cursor = 'pointer';
+  
+  const selectAllLabel = document.createElement('label');
+  selectAllLabel.htmlFor = 'selectAllBerths';
+  selectAllLabel.textContent = 'All';
+  selectAllLabel.style.fontSize = '0.8rem';
+  selectAllLabel.style.color = 'var(--muted)';
+  selectAllLabel.style.cursor = 'pointer';
+  
+  selectAllDiv.appendChild(selectAllCheckbox);
+  selectAllDiv.appendChild(selectAllLabel);
+  container.appendChild(selectAllDiv);
+  
+  // Add individual berth type checkboxes
+  Object.keys(DATA.berthTypes).forEach(type => {
+    const div = document.createElement('div');
+    div.style.display = 'flex';
+    div.style.alignItems = 'center';
+    div.style.gap = '0.3rem';
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = type;
+    checkbox.checked = true;
+    checkbox.className = 'berth-type-checkbox';
+    checkbox.style.cursor = 'pointer';
+    
+    const label = document.createElement('label');
+    label.textContent = type;
+    label.style.fontSize = '0.8rem';
+    label.style.color = 'var(--muted)';
+    label.style.cursor = 'pointer';
+    
+    div.appendChild(checkbox);
+    div.appendChild(label);
+    container.appendChild(div);
+  });
+  
+  // Initialize selected types with all types
+  selectedBerthTypes = new Set(Object.keys(DATA.berthTypes));
+  
+  // Add event listeners
+  selectAllCheckbox.addEventListener('change', (e) => {
+    const isChecked = e.target.checked;
+    document.querySelectorAll('.berth-type-checkbox').forEach(cb => {
+      cb.checked = isChecked;
+    });
+    updateSelectedBerthTypes();
+    if (DATA) renderReport();
+  });
+  
+  document.querySelectorAll('.berth-type-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+      updateSelectedBerthTypes();
+      // Update select all checkbox state
+      const allChecked = Array.from(document.querySelectorAll('.berth-type-checkbox')).every(cb => cb.checked);
+      selectAllCheckbox.checked = allChecked;
+      if (DATA) renderReport();
+    });
+  });
+}
+
+function updateSelectedBerthTypes() {
+  selectedBerthTypes.clear();
+  document.querySelectorAll('.berth-type-checkbox:checked').forEach(checkbox => {
+    selectedBerthTypes.add(checkbox.value);
+  });
+}
+
+function getFilteredLabels() {
+  if (!showYearsOnly) {
+    return DATA.labels;
+  }
+  
+  // Extract just the year from each label
+  return DATA.labels.map(label => {
+    const parts = label.split(' ');
+    return parts[parts.length - 1]; // Get the year part
+  });
+}
+
+function getFilteredData() {
+  if (!DATA) {
+    console.log('No DATA available in getFilteredData');
+    return {
+      labels: [],
+      overall: [],
+      berthTypes: {},
+      current_overall: 0,
+      peak_overall: 0,
+      peak_date: ''
+    };
+  }
+  
+  console.log('getFilteredData called, selected types:', Array.from(selectedBerthTypes));
+  
+  if (selectedBerthTypes.size === 0) {
+    // If no types selected, default to all types
+    console.log('No types selected, defaulting to all');
+    selectedBerthTypes = new Set(Object.keys(DATA.berthTypes));
+  }
+  
+  if (selectedBerthTypes.size === Object.keys(DATA.berthTypes).length) {
+    // All types selected - return full data
+    console.log('All types selected, returning full data');
+    return {
+      labels: DATA.labels,
+      overall: DATA.overall,
+      berthTypes: DATA.berthTypes,
+      current_overall: DATA.current_overall,
+      peak_overall: DATA.peak_overall,
+      peak_date: DATA.peak_date
+    };
+  }
+  
+  // Calculate aggregated data for selected types only
+  const selectedTypesArray = Array.from(selectedBerthTypes);
+  console.log('Calculating aggregated data for types:', selectedTypesArray);
+  
+  const filteredBerthTypes = {};
+  selectedTypesArray.forEach(type => {
+    filteredBerthTypes[type] = DATA.berthTypes[type];
+  });
+  
+  // Calculate aggregated overall occupancy for selected types
+  const aggregatedOverall = DATA.labels.map((_, index) => {
+    let totalOccupancy = 0;
+    let count = 0;
+    selectedTypesArray.forEach(type => {
+      const values = DATA.berthTypes[type];
+      if (values && values[index] !== undefined) {
+        totalOccupancy += values[index];
+        count++;
+      }
+    });
+    return count > 0 ? totalOccupancy / count : 0;
+  });
+  
+  console.log('Aggregated overall sample:', aggregatedOverall.slice(0, 3));
+  
+  return {
+    labels: DATA.labels,
+    overall: aggregatedOverall,
+    berthTypes: filteredBerthTypes,
+    current_overall: aggregatedOverall[aggregatedOverall.length - 1] || 0,
+    peak_overall: Math.max(...aggregatedOverall),
+    peak_date: DATA.peak_date
+  };
+}
+
+function renderOverallChart() {
+  if (!DATA || !DATA.overall || DATA.overall.length === 0) {
+    console.log('No overall data to render chart');
+    return;
+  }
+  
+  const filteredData = getFilteredData();
+  const filteredLabels = getFilteredLabels();
+  
+  console.log('Rendering overall chart with', filteredData.overall.length, 'data points');
+  console.log('Sample data:', filteredLabels.slice(0, 3), filteredData.overall.slice(0, 3));
+  
+  if (filteredData.overall.length === 0) {
+    console.log('Filtered overall data is empty, skipping chart render');
+    return;
+  }
+  
+  document.getElementById('trend-chart-title').textContent = `${DATA.start_date} – ${DATA.end_date}`;
+  document.getElementById('trend-chart-foot').textContent = 
+    `Peak of ${filteredData.peak_overall.toFixed(1)}% in ${filteredData.peak_date}. Current: ${filteredData.current_overall.toFixed(1)}% in ${DATA.latest_date}.`;
+  
+  renderLineChart('chartOverall', {
+    labels: filteredLabels,
+    series: [{
+      data: filteredData.overall,
+      color: 'var(--teal)',
+      area: true
+    }],
+    yMin: Math.min(...filteredData.overall) - 5,
+    yMax: Math.max(...filteredData.overall) + 5,
+    xEvery: Math.ceil(filteredLabels.length / 12)
+  });
+}
+
+function renderByTypeChart() {
+  if (!DATA || !DATA.berthTypes) return;
+  
+  const filteredData = getFilteredData();
+  const filteredLabels = getFilteredLabels();
+  
+  const berthTypes = Object.entries(filteredData.berthTypes);
+  if (berthTypes.length === 0) return;
+  
+  // Generate annual averages for each type
+  const years = [...new Set(DATA.labels.map(l => l.split(' ')[1]))];
+  const colors = ['var(--teal)', 'var(--seafoam)', 'var(--brass)', 'var(--rust)', 'var(--navy-2)'];
+  
+  const series = berthTypes.slice(0, 5).map(([name, values], index) => ({
+    label: name,
+    data: values, // Using monthly data for now
+    color: colors[index % colors.length]
+  }));
+  
+  renderLineChart('chartByType', {
+    labels: filteredLabels,
+    series: series,
+    yMin: 0,
+    yMax: 100,
+    xEvery: Math.ceil(filteredLabels.length / 12)
+  });
+  
+  // Render legend
+  const legendContainer = document.getElementById('typeLegend');
+  legendContainer.innerHTML = '';
+  series.forEach(s => {
+    const chip = document.createElement('div');
+    chip.className = 'legend-chip';
+    chip.innerHTML = `<i style="background:${s.color}"></i>${s.label}`;
+    legendContainer.appendChild(chip);
+  });
+}
+
+function renderSeasonalChart() {
+  if (!DATA || !DATA.overall || DATA.overall.length === 0) return;
+  
+  const filteredData = getFilteredData();
+  
+  // Calculate monthly averages across all years
+  const monthlyData = {};
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  DATA.labels.forEach((label, index) => {
+    const month = label.split(' ')[0];
+    if (!monthlyData[month]) {
+      monthlyData[month] = [];
+    }
+    monthlyData[month].push(filteredData.overall[index]);
+  });
+  
+  const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const labels = [];
+  const values = [];
+  
+  monthOrder.forEach(month => {
+    if (monthlyData[month] && monthlyData[month].length > 0) {
+      labels.push(month);
+      const avg = monthlyData[month].reduce((a, b) => a + b, 0) / monthlyData[month].length;
+      values.push(avg);
+    }
+  });
+  
+  renderBarChart('chartSeason', {
+    labels: labels,
+    values: values,
+    yMin: Math.min(...values) - 2,
+    yMax: Math.max(...values) + 2,
+    color: 'var(--teal)'
+  });
+}
+
+function renderInventoryTable() {
+  if (!DATA || !DATA.berthTypes) {
+    console.log('No berth types data for inventory table');
+    return;
+  }
+  
+  const filteredData = getFilteredData();
+  
+  console.log('Rendering inventory table with berth types:', Object.keys(filteredData.berthTypes));
+  console.log('Berth counts:', DATA.berthCounts);
+  
+  const tbody = document.getElementById('inv-body');
+  tbody.innerHTML = '';
+  
+  const subtitle = selectedBerthTypes.size === Object.keys(DATA.berthTypes).length
+    ? `Berth count and occupancy by category, ${DATA.latest_date}.`
+    : selectedBerthTypes.size === 1
+    ? `Berth count and occupancy for ${Array.from(selectedBerthTypes)[0]}, ${DATA.latest_date}.`
+    : `Berth count and occupancy for ${selectedBerthTypes.size} selected types, ${DATA.latest_date}.`;
+  
+  document.getElementById('inv-sub').textContent = subtitle;
+  
+  Object.entries(filteredData.berthTypes).forEach(([name, values]) => {
+    const latestValue = values[values.length - 1] || 0;
+    // Use actual berth count from data
+    const berthCount = DATA.berthCounts[name] || 0;
+    
+    console.log(`Rendering row for ${name}: ${berthCount} berths, ${latestValue.toFixed(1)}% occupancy`);
+    
+    const row = document.createElement('tr');
+    const barClass = latestValue < 50 ? 'low' : latestValue < 75 ? 'mid' : '';
+    
+    row.innerHTML = `
+      <td>${name}</td>
+      <td class="num">${berthCount}</td>
+      <td>
+        <div class="occ-bar-wrap">
+          <div class="occ-bar ${barClass}">
+            <span style="width:${latestValue}%"></span>
+          </div>
+        </div>
+      </td>
+      <td class="num">${latestValue.toFixed(1)}%</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// ---- lightweight, dependency-free SVG chart renderer ----
+const SVGNS = 'http://www.w3.org/2000/svg';
+const NUMFMT = (v) => (Math.round(v * 10) / 10).toString();
+
+function niceBounds(values, padFrac){
+  const min = Math.min(...values), max = Math.max(...values);
+  const pad = Math.max((max - min) * padFrac, 1);
+  return { lo: Math.max(0, Math.floor((min - pad) / 5) * 5), hi: Math.min(100, Math.ceil((max + pad) / 5) * 5) };
+}
+
+function renderLineChart(containerId, { labels, series, yMin, yMax, xEvery, markers }) {
+  const W = 900, H = 280, padL = 40, padR = 14, padT = 14, padB = 28;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const n = labels.length;
+  const xAt = (i) => padL + (n === 1 ? 0 : innerW * (i / (n - 1)));
+  const yAt = (v) => padT + innerH * (1 - (v - yMin) / (yMax - yMin));
+
+  const tickCount = 5;
+  const ticks = Array.from({ length: tickCount }, (_, i) => yMin + (yMax - yMin) * (i / (tickCount - 1)));
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="${SVGNS}">`;
+
+  // gridlines + y labels
+  ticks.forEach((t) => {
+    const y = yAt(t);
+    svg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" style="stroke:var(--line)" stroke-width="1"/>`;
+    svg += `<text x="${padL - 8}" y="${y + 3}" text-anchor="end" font-size="10" style="fill:var(--muted)">${NUMFMT(t)}%</text>`;
+  });
+
+  // x labels
+  labels.forEach((lab, i) => {
+    if (i % xEvery !== 0 && i !== n - 1) return;
+    svg += `<text x="${xAt(i)}" y="${H - padB + 16}" text-anchor="middle" font-size="10" style="fill:var(--muted)">${lab}</text>`;
+  });
+
+  // series
+  series.forEach((s) => {
+    const pts = s.data.map((v, i) => [xAt(i), yAt(v)]);
+    const pathD = 'M ' + pts.map((p) => p.join(',')).join(' L ');
+    if (s.area) {
+      const base = padT + innerH;
+      const areaD = `M ${pts[0][0]},${base} L ` + pts.map((p) => p.join(',')).join(' L ') + ` L ${pts[pts.length - 1][0]},${base} Z`;
+      svg += `<path d="${areaD}" style="fill:${s.color}" opacity="0.13" stroke="none"/>`;
+    }
+    svg += `<path d="${pathD}" style="stroke:${s.color}" stroke-width="2.25" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
+    if (markers) {
+      pts.forEach(([x, y]) => {
+        svg += `<circle cx="${x}" cy="${y}" r="3" style="fill:${s.color}"/>`;
+      });
+    }
+  });
+
+  svg += `</svg>`;
+  document.getElementById(containerId).innerHTML = svg;
+}
+
+function renderBarChart(containerId, { labels, values, yMin, yMax, color }) {
+  const W = 900, H = 220, padL = 40, padR = 14, padT = 14, padB = 28;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const n = labels.length;
+  const slot = innerW / n;
+  const barW = slot * 0.56;
+  const yAt = (v) => padT + innerH * (1 - (v - yMin) / (yMax - yMin));
+  const base = padT + innerH;
+
+  const tickCount = 4;
+  const ticks = Array.from({ length: tickCount }, (_, i) => yMin + (yMax - yMin) * (i / (tickCount - 1)));
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="${SVGNS}">`;
+  ticks.forEach((t) => {
+    const y = yAt(t);
+    svg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" style="stroke:var(--line)" stroke-width="1"/>`;
+    svg += `<text x="${padL - 8}" y="${y + 3}" text-anchor="end" font-size="10" style="fill:var(--muted)">${NUMFMT(t)}%</text>`;
+  });
+
+  values.forEach((v, i) => {
+    const cx = padL + slot * (i + 0.5);
+    const y = yAt(v);
+    const h = base - y;
+    svg += `<rect x="${cx - barW / 2}" y="${y}" width="${barW}" height="${h}" rx="2" style="fill:${color}" opacity="0.85"/>`;
+    svg += `<text x="${cx}" y="${H - padB + 16}" text-anchor="middle" font-size="10" style="fill:var(--muted)">${labels[i]}</text>`;
+  });
+
+  svg += `</svg>`;
+  document.getElementById(containerId).innerHTML = svg;
+}
+</script>
+
+</body>
+</html>
