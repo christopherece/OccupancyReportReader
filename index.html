@@ -10,49 +10,49 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
-    --paper:#F1F3EF;
+    --paper:#F8F9FA;
     --paper-raised:#FFFFFF;
-    --ink:#16232A;
-    --muted:#5A6B6A;
-    --navy:#0C2333;
-    --navy-2:#123B4C;
-    --teal:#1C6E76;
-    --seafoam:#6FA88C;
-    --rust:#A8552E;
-    --brass:#B08A2E;
-    --line:#D9DED7;
-    --line-strong:#B9C2BB;
+    --ink:#2C3E50;
+    --muted:#6C757D;
+    --navy:#003366; /* Westhaven marine blue */
+    --navy-2:#004080;
+    --teal:#00A3E0; /* Water blue */
+    --seafoam:#28A745; /* Environmental green */
+    --rust:#DC3545;
+    --brass:#FFC107; /* Gold anchor color */
+    --line:#DEE2E6;
+    --line-strong:#ADB5BD;
     font-size:16px;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --paper:#111815;
-      --paper-raised:#161F1C;
-      --ink:#EAEEE9;
-      --muted:#9AAAA3;
-      --navy:#081620;
-      --navy-2:#0E2B37;
-      --teal:#4FA3AC;
-      --seafoam:#7FB99C;
-      --rust:#C97A50;
-      --brass:#D3AE55;
-      --line:#2A332F;
-      --line-strong:#3A443F;
+      --paper:#1A1D21;
+      --paper-raised:#252930;
+      --ink:#E9ECEF;
+      --muted:#ADB5BD;
+      --navy:#0A1628;
+      --navy-2:#132238;
+      --teal:#33B5E5;
+      --seafoam:#4CAF50;
+      --rust:#E57373;
+      --brass:#FFD54F;
+      --line:#374151;
+      --line-strong:#4B5563;
     }
   }
   :root[data-theme="dark"]{
-    --paper:#111815;
-    --paper-raised:#161F1C;
-    --ink:#EAEEE9;
-    --muted:#9AAAA3;
-    --navy:#081620;
-    --navy-2:#0E2B37;
-    --teal:#4FA3AC;
-    --seafoam:#7FB99C;
-    --rust:#C97A50;
-    --brass:#D3AE55;
-    --line:#2A332F;
-    --line-strong:#3A443F;
+    --paper:#1A1D21;
+    --paper-raised:#252930;
+    --ink:#E9ECEF;
+    --muted:#ADB5BD;
+    --navy:#0A1628;
+    --navy-2:#132238;
+    --teal:#33B5E5;
+    --seafoam:#4CAF50;
+    --rust:#E57373;
+    --brass:#FFD54F;
+    --line:#374151;
+    --line-strong:#4B5563;
   }
 
   *{box-sizing:border-box;}
@@ -304,6 +304,52 @@
   .chart-wrap.short{height:220px;}
   .svg-chart{width:100%; height:100%; display:block;}
   .svg-chart svg{width:100%; height:100%; display:block; overflow:visible;}
+  
+  /* Tooltip styles */
+  .chart-tooltip {
+    position: absolute;
+    background: var(--navy);
+    color: #EFF4F2;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    white-space: nowrap;
+  }
+  .chart-tooltip.visible {
+    opacity: 1;
+  }
+  .chart-tooltip .tooltip-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    color: #AFC6C4;
+  }
+  .chart-tooltip .tooltip-value {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  /* Interactive chart elements */
+  .chart-point {
+    cursor: pointer;
+    transition: r 0.2s, stroke-width 0.2s;
+  }
+  .chart-point:hover {
+    r: 6;
+    stroke-width: 3;
+  }
+  .chart-bar {
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .chart-bar:hover {
+    opacity: 1 !important;
+  }
+  
   .chart-foot{
     font-size:.78rem; color:var(--muted); margin-top:.9rem; padding-top:.7rem;
     border-top:1px solid var(--line);
@@ -330,9 +376,10 @@
   .occ-bar.mid > span{background:var(--brass);}
 
   footer{
-    max-width:920px; margin:0 auto; padding:0 1.5rem 3.5rem;
-    color:var(--muted); font-size:.8rem; line-height:1.6;
-    border-top:1px solid var(--line); padding-top:1.6rem;
+    max-width:920px; margin:0 auto; padding:0 1.5rem 2rem;
+    color:var(--muted); font-size:.85rem; line-height:1.4;
+    border-top:1px solid var(--line); padding-top:1.2rem;
+    text-align:center;
   }
 
   @media (max-width:640px){
@@ -415,6 +462,7 @@
     }
     footer {
       border-top: 1px solid #000 !important;
+      text-align: center !important;
     }
   }
 </style>
@@ -446,7 +494,7 @@
     </div>
     <div class="file-input-wrapper">
       <button class="file-input-btn">Upload Excel File</button>
-      <input type="file" id="fileInput" accept=".xlsx,.xls" />
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" />
     </div>
     <div class="file-name" id="fileName"></div>
     <div class="loading" id="loading">Processing data...</div>
@@ -581,9 +629,7 @@
 </main>
 
 <footer>
-  Occupancy is calculated as total occupied berth-days divided by total available berth-days for
-  each period, weighted across every berth in the category. Upload your own data to generate
-  customized reports.
+  Westhaven Marina Berth Occupancy Analytics Report
 </footer>
 
 </div>
@@ -624,6 +670,7 @@ function handleFileUpload(event) {
 
   console.log('=== NEW FILE UPLOAD ===');
   console.log('File selected:', file.name, file.size, 'bytes');
+  console.log('File type:', file.type);
   console.log('Last modified:', new Date(file.lastModified));
   
   document.getElementById('fileName').textContent = file.name;
@@ -637,9 +684,38 @@ function handleFileUpload(event) {
       console.log('Processing workbook...');
       
       const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
       
-      console.log('Workbook loaded, sheets:', workbook.SheetNames);
+      // Try different reading options to handle various Excel formats
+      let workbook;
+      try {
+        // Try binary string format first (more compatible)
+        const binaryString = Array.from(data).map(byte => String.fromCharCode(byte)).join('');
+        workbook = XLSX.read(binaryString, { type: 'binary' });
+        console.log('Binary format succeeded');
+      } catch (firstError) {
+        console.log('Binary format failed, trying array format:', firstError.message);
+        try {
+          workbook = XLSX.read(data, { type: 'array' });
+          console.log('Array format succeeded');
+        } catch (secondError) {
+          console.log('Array format failed, trying with more options:', secondError.message);
+          try {
+            // Try with more options for older formats
+            workbook = XLSX.read(data, { type: 'array', cellDates: true, cellStyles: true });
+            console.log('Array format with options succeeded');
+          } catch (thirdError) {
+            console.error('All parsing attempts failed:', thirdError);
+            throw new Error(`Unable to parse Excel file. Please ensure it's a valid .xlsx or .xls file. Error: ${thirdError.message}`);
+          }
+        }
+      }
+      
+      console.log('Workbook loaded successfully, sheets:', workbook.SheetNames);
+      console.log('Sheet count:', workbook.SheetNames.length);
+      
+      if (workbook.SheetNames.length === 0) {
+        throw new Error('The Excel file contains no sheets');
+      }
       
       // Clear previous data explicitly
       console.log('Clearing previous data...');
@@ -664,8 +740,18 @@ function handleFileUpload(event) {
     } catch (error) {
       console.error('Error processing file:', error);
       document.getElementById('loading').style.display = 'none';
-      document.getElementById('error').style.display = 'block';
-      document.getElementById('error').textContent = 'Error processing file: ' + error.message;
+      const errorDiv = document.getElementById('error');
+      errorDiv.style.display = 'block';
+      errorDiv.innerHTML = `
+        <div style="margin-bottom: 0.5rem;"><strong>Error:</strong> ${error.message}</div>
+        <div style="margin-bottom: 0.5rem;">If you're having trouble uploading:</div>
+        <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.8rem;">
+          <li>Ensure the file is a valid Excel (.xlsx, .xls) or CSV file</li>
+          <li>Check that the file is not corrupted</li>
+          <li>Try saving the Excel file in a different format</li>
+          <li>Make sure the file contains the required columns: Berth, BerthType, Year, Month, OccupiedDays, DaysInMonth</li>
+        </ul>
+      `;
     }
   };
   
@@ -983,19 +1069,7 @@ function updateSummary() {
   calloutList.innerHTML = `
     <li>
       <span class="bar"></span>
-      <span><b>Interactive Visualization.</b> Upload data to generate dynamic charts that update in real-time.</span>
-    </li>
-    <li>
-      <span class="bar"></span>
-      <span><b>Multi-dimensional Analysis.</b> Examine trends by berth type, time period, and seasonal patterns.</span>
-    </li>
-    <li>
-      <span class="bar"></span>
-      <span><b>Flexible Filtering.</b> Focus on specific categories or toggle between monthly and yearly views.</span>
-    </li>
-    <li>
-      <span class="bar"></span>
-      <span><b>Current Snapshot.</b> View occupancy rates across all berth categories at a glance.</span>
+      <span>Occupancy is calculated as total occupied berth-days divided by total available berth-days for each period, weighted across every berth in the category. Upload your own data to generate customized reports.</span>
     </li>
   `;
 }
@@ -1264,7 +1338,8 @@ function renderByTypeChart() {
   const series = berthTypes.slice(0, 5).map(([name, values], index) => ({
     label: name,
     data: values, // Using monthly data for now
-    color: colors[index % colors.length]
+    color: colors[index % colors.length],
+    seriesName: name // Store series name for tooltip
   }));
   
   renderLineChart('chartByType', {
@@ -1417,15 +1492,24 @@ function renderLineChart(containerId, { labels, series, yMin, yMax, xEvery, mark
       svg += `<path d="${areaD}" style="fill:${s.color}" opacity="0.13" stroke="none"/>`;
     }
     svg += `<path d="${pathD}" style="stroke:${s.color}" stroke-width="2.25" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
-    if (markers) {
-      pts.forEach(([x, y]) => {
-        svg += `<circle cx="${x}" cy="${y}" r="3" style="fill:${s.color}"/>`;
-      });
-    }
+    
+    // Add interactive points for hover
+    pts.forEach(([x, y], i) => {
+      const value = s.data[i];
+      const label = labels[i];
+      // Invisible larger circle for easier hover detection
+      svg += `<circle cx="${x}" cy="${y}" r="10" fill="transparent" class="chart-point" 
+              data-label="${label}" data-value="${NUMFMT(value)}" data-series="${s.seriesName || ''}"/>`;
+      // Visible small circle
+      svg += `<circle cx="${x}" cy="${y}" r="3" style="fill:${s.color}" pointer-events="none"/>`;
+    });
   });
 
   svg += `</svg>`;
   document.getElementById(containerId).innerHTML = svg;
+  
+  // Add tooltip functionality
+  addChartTooltip(containerId);
 }
 
 function renderBarChart(containerId, { labels, values, yMin, yMax, color }) {
@@ -1451,12 +1535,73 @@ function renderBarChart(containerId, { labels, values, yMin, yMax, color }) {
     const cx = padL + slot * (i + 0.5);
     const y = yAt(v);
     const h = base - y;
-    svg += `<rect x="${cx - barW / 2}" y="${y}" width="${barW}" height="${h}" rx="2" style="fill:${color}" opacity="0.85"/>`;
+    svg += `<rect x="${cx - barW / 2}" y="${y}" width="${barW}" height="${h}" rx="2" 
+            class="chart-bar" data-label="${labels[i]}" data-value="${NUMFMT(v)}"
+            style="fill:${color}" opacity="0.85"/>`;
     svg += `<text x="${cx}" y="${H - padB + 16}" text-anchor="middle" font-size="10" style="fill:var(--muted)">${labels[i]}</text>`;
   });
 
   svg += `</svg>`;
   document.getElementById(containerId).innerHTML = svg;
+  
+  // Add tooltip functionality
+  addChartTooltip(containerId);
+}
+
+function addChartTooltip(containerId) {
+  const container = document.getElementById(containerId);
+  const chartWrap = container.closest('.chart-wrap');
+  
+  // Remove existing tooltip if any
+  const existingTooltip = chartWrap.querySelector('.chart-tooltip');
+  if (existingTooltip) {
+    existingTooltip.remove();
+  }
+  
+  // Create tooltip element
+  const tooltip = document.createElement('div');
+  tooltip.className = 'chart-tooltip';
+  tooltip.innerHTML = `
+    <div class="tooltip-label"></div>
+    <div class="tooltip-value"></div>
+  `;
+  chartWrap.appendChild(tooltip);
+  
+  // Add hover event listeners to interactive elements
+  const interactiveElements = container.querySelectorAll('.chart-point, .chart-bar');
+  
+  interactiveElements.forEach(element => {
+    element.addEventListener('mouseenter', (e) => {
+      const label = e.target.dataset.label;
+      const value = e.target.dataset.value;
+      const series = e.target.dataset.series;
+      
+      if (series && series !== '') {
+        // Multi-series chart
+        tooltip.querySelector('.tooltip-label').textContent = series;
+        tooltip.querySelector('.tooltip-value').textContent = `${label}: ${value}%`;
+      } else {
+        // Single series chart
+        tooltip.querySelector('.tooltip-label').textContent = label;
+        tooltip.querySelector('.tooltip-value').textContent = `${value}%`;
+      }
+      tooltip.classList.add('visible');
+    });
+    
+    element.addEventListener('mousemove', (e) => {
+      const rect = chartWrap.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      // Position tooltip near the mouse but keep it within bounds
+      tooltip.style.left = `${Math.min(x + 10, rect.width - tooltip.offsetWidth - 10)}px`;
+      tooltip.style.top = `${Math.max(y - tooltip.offsetHeight - 10, 10)}px`;
+    });
+    
+    element.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+    });
+  });
 }
 </script>
 
