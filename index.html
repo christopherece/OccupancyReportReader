@@ -528,10 +528,7 @@
           <div class="n" id="stat-berths">—</div>
           <div class="l">berths tracked</div>
         </div>
-        <div>
-          <div class="n" id="stat-peak">—</div>
-          <div class="l" id="stat-peak-label">five-year peak</div>
-        </div>
+
         <div>
           <div class="n" id="stat-categories">—</div>
           <div class="l">berth categories</div>
@@ -1027,8 +1024,6 @@ function renderReport() {
     document.getElementById('stat-berths').textContent = totalSelectedBerths.toLocaleString();
   }
   
-  document.getElementById('stat-peak').textContent = (filteredData.peak_overall !== undefined ? filteredData.peak_overall.toFixed(1) : '—') + '%';
-  document.getElementById('stat-peak-label').textContent = 'peak, ' + (filteredData.peak_date || '—');
   document.getElementById('stat-categories').textContent = selectedBerthTypes.size;
   
   // Update summary
