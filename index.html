@@ -528,7 +528,10 @@
           <div class="n" id="stat-berths">—</div>
           <div class="l">berths tracked</div>
         </div>
-
+        <div>
+          <div class="n" id="stat-peak">—</div>
+          <div class="l" id="stat-peak-label">five-year peak</div>
+        </div>
         <div>
           <div class="n" id="stat-categories">—</div>
           <div class="l">berth categories</div>
@@ -835,6 +838,7 @@ function parseExcelData(jsonData) {
   const occupancyPercentCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('occupancypercent'));
   
   console.log('Column indices:', { berthCol, berthTypeCol, yearCol, monthCol, occupiedDaysCol, daysInMonthCol, occupancyPercentCol });
+  console.log('Sample row data:', jsonData[1]);
   
   // Sample some raw data to verify file content
   console.log('Sample raw rows:');
@@ -843,7 +847,7 @@ function parseExcelData(jsonData) {
   }
   
   // Aggregate data by month and berth type
-  const monthlyData = {}; // Key: "YYYY-MM", Value: { totalOccupiedDays: 0, totalDaysInMonth: 0, berthTypes: { type: { occupied: 0, days: 0 } } }
+  const monthlyData = {}; // Key: "YYYY-MM", Value: { totalOccupiedDays: 0, totalDaysInMonth: 0, berthTypes: { type: { occupied: 0, days: 0, individualPercents: [] } } }
   const berthTypes = new Set();
   const berthCounts = {}; // Key: berthType, Value: Set of unique berth IDs
   
@@ -857,6 +861,7 @@ function parseExcelData(jsonData) {
     const month = row[monthCol];
     const occupiedDays = parseFloat(row[occupiedDaysCol]) || 0;
     const daysInMonth = parseFloat(row[daysInMonthCol]) || 0;
+    const occupancyPercent = parseFloat(row[occupancyPercentCol]) || 0;
     
     if (!berthType || !year || !month) continue;
     
@@ -875,14 +880,17 @@ function parseExcelData(jsonData) {
       monthlyData[monthKey] = {
         totalOccupiedDays: 0,
         totalDaysInMonth: 0,
-        berthTypes: {}
+        berthTypes: {},
+        totalOccupancyPercent: 0,
+        recordCount: 0
       };
     }
     
     if (!monthlyData[monthKey].berthTypes[berthType]) {
       monthlyData[monthKey].berthTypes[berthType] = {
         occupiedDays: 0,
-        daysInMonth: 0
+        daysInMonth: 0,
+        individualPercents: []
       };
     }
     
@@ -890,11 +898,25 @@ function parseExcelData(jsonData) {
     monthlyData[monthKey].totalDaysInMonth += daysInMonth;
     monthlyData[monthKey].berthTypes[berthType].occupiedDays += occupiedDays;
     monthlyData[monthKey].berthTypes[berthType].daysInMonth += daysInMonth;
+    
+    // Store individual berth occupancy percent for this berth type
+    monthlyData[monthKey].berthTypes[berthType].individualPercents.push(occupancyPercent);
+    
+    // Add individual berth occupancy percent for overall averaging
+    monthlyData[monthKey].totalOccupancyPercent += occupancyPercent;
+    monthlyData[monthKey].recordCount += 1;
   }
   
   console.log('Total rows processed:', jsonData.length - 1);
   console.log('Unique months found:', Object.keys(monthlyData).length);
   console.log('Berth types found:', Array.from(berthTypes));
+  
+  // Debug: Check if occupancyPercent column was found
+  if (occupancyPercentCol === -1) {
+    console.warn('OccupancyPercent column not found! Calculation may be incorrect.');
+  } else {
+    console.log('OccupancyPercent column found at index:', occupancyPercentCol);
+  }
   
   // Convert to sorted monthly data
   const sortedMonths = Object.keys(monthlyData).sort();
@@ -939,7 +961,11 @@ function parseExcelData(jsonData) {
     data.labels.push(label);
     
     const monthData = monthlyData[monthKey];
-    const overallOccupancy = (monthData.totalOccupiedDays / monthData.totalDaysInMonth) * 100;
+    
+    // Calculate overall occupancy as simple average of individual berth occupancy percentages
+    const overallOccupancy = monthData.recordCount > 0 
+      ? Math.round((monthData.totalOccupancyPercent / monthData.recordCount) * 10) / 10 
+      : 0;
     data.overall.push(overallOccupancy);
     
     // Calculate occupancy for each berth type
@@ -1024,6 +1050,8 @@ function renderReport() {
     document.getElementById('stat-berths').textContent = totalSelectedBerths.toLocaleString();
   }
   
+  document.getElementById('stat-peak').textContent = (filteredData.peak_overall !== undefined ? filteredData.peak_overall.toFixed(1) : '—') + '%';
+  document.getElementById('stat-peak-label').textContent = 'peak, ' + (filteredData.peak_date || '—');
   document.getElementById('stat-categories').textContent = selectedBerthTypes.size;
   
   // Update summary
@@ -1258,17 +1286,22 @@ function getFilteredData() {
   });
   
   // Calculate aggregated overall occupancy for selected types
+  // Use individual berth percentages from selected types, weighted by berth count
   const aggregatedOverall = DATA.labels.map((_, index) => {
     let totalOccupancy = 0;
-    let count = 0;
+    let totalRecords = 0;
+    
     selectedTypesArray.forEach(type => {
       const values = DATA.berthTypes[type];
       if (values && values[index] !== undefined) {
-        totalOccupancy += values[index];
-        count++;
+        // Weight by berth count to approximate individual berth averaging
+        const berthCount = DATA.berthCounts[type] || 1;
+        totalOccupancy += values[index] * berthCount;
+        totalRecords += berthCount;
       }
     });
-    return count > 0 ? totalOccupancy / count : 0;
+    
+    return totalRecords > 0 ? Math.round((totalOccupancy / totalRecords) * 10) / 10 : 0;
   });
   
   console.log('Aggregated overall sample:', aggregatedOverall.slice(0, 3));
