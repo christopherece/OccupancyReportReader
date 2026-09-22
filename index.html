@@ -514,10 +514,10 @@
   </svg>
   <div class="hero-inner">
     <div class="hero-eyebrow">
-      <span>Westhaven Marina · Berth Occupancy</span>
+      <span id="hero-marina-name">Westhaven Marina · Berth Occupancy</span>
       <span id="hero-period"></span>
     </div>
-    <h1 class="hero-title">Five years of berth occupancy, at a glance</h1>
+    <h1 class="hero-title" id="hero-title-text">Five years of berth occupancy, at a glance</h1>
     <div class="hero-stat-row">
       <div class="hero-stat-main">
         <div class="num" id="hero-num">—</div>
@@ -1038,6 +1038,13 @@ function renderReport() {
   document.getElementById('hero-num').innerHTML = (filteredData.current_overall !== undefined ? filteredData.current_overall.toFixed(1) : '—') + '<sup>%</sup>';
   document.getElementById('hero-latest').textContent = DATA.latest_date || '—';
   
+  // Update hero title dynamically based on date range
+  const yearsCovered = calculateYearsCovered(DATA.start_date, DATA.end_date);
+  document.getElementById('hero-title-text').textContent = `${yearsCovered} of berth occupancy, at a glance`;
+  
+  // Update marina name (can be customized based on data if needed)
+  document.getElementById('hero-marina-name').textContent = 'Westhaven Marina · Berth Occupancy';
+  
   // Update berth count based on selection
   if (selectedBerthTypes.size === Object.keys(DATA.berthTypes).length) {
     document.getElementById('stat-berths').textContent = (DATA.total_berths || 0).toLocaleString();
@@ -1079,82 +1086,34 @@ function renderReport() {
 function updateSummary() {
   console.log('Updating summary, total_berths:', DATA.total_berths);
   
-  // Generate data-driven summary text
-  const yearsCovered = calculateYearsCovered(DATA.start_date, DATA.end_date);
-  const totalBerths = DATA.total_berths || 0;
-  const berthTypeCount = Object.keys(DATA.berthTypes).length;
-  
+  // Educational legend explaining the report
   const summaryText = `
-    This report analyzes berth occupancy across <strong>${totalBerths.toLocaleString()}</strong> berths
-    in <strong>${berthTypeCount}</strong> categories over ${yearsCovered.toLowerCase()}.
-    Overall occupancy is calculated using berth-days weighting (total occupied days / total available days).
-    Current fleet-wide occupancy is <strong>${DATA.current_overall.toFixed(1)}%</strong> as of 
-    <strong>${DATA.latest_date}</strong>, with a peak of <strong>${DATA.peak_overall.toFixed(1)}%</strong> 
-    reached in <strong>${DATA.peak_date}</strong>.
+    <strong>How to read this report:</strong> Occupancy is calculated as 
+    <strong>(Occupied Days ÷ Available Days) × 100</strong> for each berth, 
+    then aggregated using berth-days weighting for overall metrics.
   `;
   document.getElementById('summary-text').innerHTML = summaryText;
   
-  // Generate data-driven callouts
-  const callouts = generateCallouts();
+  // Educational callouts explaining each section
   const calloutList = document.getElementById('callout-list');
-  calloutList.innerHTML = '';
-  
-  callouts.forEach(callout => {
-    const li = document.createElement('li');
-    li.className = callout.trend;
-    li.innerHTML = `
+  calloutList.innerHTML = `
+    <li>
       <span class="bar"></span>
-      <span><b>${callout.title}</b> ${callout.text}</span>
-    `;
-    calloutList.appendChild(li);
-  });
-}
-
-function generateCallouts() {
-  const callouts = [];
-  const berthTypes = Object.entries(DATA.berthTypes);
-  
-  // Find best and worst performing categories
-  if (berthTypes.length > 0) {
-    const performance = berthTypes.map(([name, values]) => {
-      const first = values[0] || 0;
-      const last = values[values.length - 1] || 0;
-      const change = last - first;
-      return { name, change, first, last };
-    });
-    
-    performance.sort((a, b) => b.change - a.change);
-    
-    // Best performer
-    if (performance.length > 0) {
-      const best = performance[0];
-      callouts.push({
-        trend: best.change > 0 ? 'up' : 'down',
-        title: `${best.name} ${best.change > 0 ? 'showing growth' : 'in decline'}.`,
-        text: `Occupancy ${best.change > 0 ? 'increased' : 'decreased'} from ${best.first.toFixed(1)}% to ${best.last.toFixed(1)}% over the period.`
-      });
-    }
-    
-    // Worst performer
-    if (performance.length > 1) {
-      const worst = performance[performance.length - 1];
-      callouts.push({
-        trend: worst.change < 0 ? 'down' : 'up',
-        title: `${worst.name} ${worst.change < 0 ? 'struggling' : 'performing well'}.`,
-        text: `Occupancy ${worst.change < 0 ? 'dropped' : 'rose'} from ${worst.first.toFixed(1)}% to ${worst.last.toFixed(1)}%.`
-      });
-    }
-  }
-  
-  // Overall trend
-  const overallChange = DATA.current_overall - DATA.overall[0];
-  callouts.push({
-    trend: overallChange >= 0 ? 'up' : 'down',
-    title: 'Overall fleet trend.',
-    text: `Fleet-wide occupancy ${overallChange >= 0 ? 'increased' : 'decreased'} by ${Math.abs(overallChange).toFixed(1)} percentage points from ${DATA.overall[0].toFixed(1)}% to ${DATA.current_overall.toFixed(1)}%.`
-  });
-  
-  return callouts;
+      <span><strong>Overall occupancy:</strong> Fleet-wide average calculated as total occupied days divided by total available days.</span>
+    </li>
+    <li>
+      <span class="bar"></span>
+      <span><strong>By berth type:</strong> Individual category performance showing each type's monthly occupancy trends.</span>
+    </li>
+    <li>
+      <span class="bar"></span>
+      <span><strong>Seasonal pattern:</strong> Average occupancy by calendar month across all years to identify seasonal trends.</span>
+    </li>
+    <li>
+      <span class="bar"></span>
+      <span><strong>Current snapshot:</strong> Latest month's occupancy by category with visual progress bars.</span>
+    </li>
+  `;
 }
 
 function populateBerthTypeDropdown() {
