@@ -3,56 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Westhaven Marina — Five-Year Occupancy Report</title>
+<title>Westhaven Marina — Berth Occupancy Report</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
-    --paper:#F8F9FA;
+    --paper:#F4F6F8;
     --paper-raised:#FFFFFF;
-    --ink:#2C3E50;
-    --muted:#6C757D;
+    --ink:#1F2D3A;
+    --muted:#5F6B76;
     --navy:#003366; /* Westhaven marine blue */
-    --navy-2:#004080;
-    --teal:#00A3E0; /* Water blue */
-    --seafoam:#28A745; /* Environmental green */
-    --rust:#DC3545;
-    --brass:#FFC107; /* Gold anchor color */
-    --line:#DEE2E6;
-    --line-strong:#ADB5BD;
+    --navy-2:#00508C;
+    --teal:#0079B0; /* Water blue */
+    --brass:#C99400; /* Gold anchor color */
+    --good:#1B7F3B;
+    --bad:#B42318;
+    --line:#E1E5EA;
+    --line-strong:#B8C0C8;
+    --heat:#0B5E8A;
+    --heat-ink:#FFFFFF;
+    --c1:#0079B0; --c2:#D55E00; --c3:#009E73; --c4:#B8860B; --c5:#8E5BA8;
     font-size:16px;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --paper:#1A1D21;
-      --paper-raised:#252930;
-      --ink:#E9ECEF;
-      --muted:#ADB5BD;
+      --paper:#14181D;
+      --paper-raised:#1D232A;
+      --ink:#E8ECEF;
+      --muted:#A3ADB6;
       --navy:#0A1628;
-      --navy-2:#132238;
-      --teal:#33B5E5;
-      --seafoam:#4CAF50;
-      --rust:#E57373;
-      --brass:#FFD54F;
-      --line:#374151;
-      --line-strong:#4B5563;
+      --navy-2:#16304F;
+      --teal:#4DB8E8;
+      --brass:#E3BF5A;
+      --good:#5BCB7E;
+      --bad:#F2857A;
+      --line:#2E3740;
+      --line-strong:#4A5561;
+      --heat:#3AA0D8;
+      --heat-ink:#0B1620;
+      --c1:#4DB8E8; --c2:#F0914D; --c3:#3FC9A0; --c4:#E3BF5A; --c5:#C39BDB;
     }
   }
   :root[data-theme="dark"]{
-    --paper:#1A1D21;
-    --paper-raised:#252930;
-    --ink:#E9ECEF;
-    --muted:#ADB5BD;
+    --paper:#14181D;
+    --paper-raised:#1D232A;
+    --ink:#E8ECEF;
+    --muted:#A3ADB6;
     --navy:#0A1628;
-    --navy-2:#132238;
-    --teal:#33B5E5;
-    --seafoam:#4CAF50;
-    --rust:#E57373;
-    --brass:#FFD54F;
-    --line:#374151;
-    --line-strong:#4B5563;
+    --navy-2:#16304F;
+    --teal:#4DB8E8;
+    --brass:#E3BF5A;
+    --good:#5BCB7E;
+    --bad:#F2857A;
+    --line:#2E3740;
+    --line-strong:#4A5561;
+    --heat:#3AA0D8;
+    --heat-ink:#0B1620;
+    --c1:#4DB8E8; --c2:#F0914D; --c3:#3FC9A0; --c4:#E3BF5A; --c5:#C39BDB;
   }
 
   *{box-sizing:border-box;}
@@ -63,7 +72,7 @@
     font-family:'IBM Plex Sans', -apple-system, sans-serif;
     -webkit-font-smoothing:antialiased;
   }
-  .display{font-family:'Fraunces', Georgia, serif;}
+  button{font:inherit;}
 
   /* Upload Section */
   .upload-section{
@@ -72,100 +81,36 @@
     padding:3rem 2rem;
     background:var(--paper-raised);
     border:1px solid var(--line);
-    border-radius:3px;
+    border-radius:6px;
     text-align:center;
   }
-  .upload-content{
-    max-width:600px;
-    margin:0 auto;
-  }
-  .upload-icon{
-    font-size:3rem;
-    margin-bottom:1rem;
-  }
+  .upload-content{max-width:600px; margin:0 auto;}
+  .upload-icon{font-size:3rem; margin-bottom:1rem;}
   .upload-section h2{
-    font-family:'Fraunces', serif;
-    font-weight:500;
-    font-size:1.8rem;
-    margin:0 0 1rem;
-    color:var(--ink);
+    font-family:'Fraunces', serif; font-weight:500; font-size:1.8rem;
+    margin:0 0 1rem; color:var(--ink);
   }
-  .upload-description{
-    color:var(--muted);
-    font-size:1rem;
-    line-height:1.6;
-    margin:0 0 2rem;
-  }
-  .upload-features{
-    display:flex;
-    justify-content:center;
-    gap:2rem;
-    margin-bottom:2rem;
-    flex-wrap:wrap;
-  }
-  .feature-item{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:0.5rem;
-    font-size:0.85rem;
-    color:var(--muted);
-  }
-  .feature-icon{
-    font-size:1.5rem;
-  }
-  .file-input-wrapper{
-    position:relative;
-    display:inline-block;
-  }
-  .file-input-wrapper input[type="file"]{
-    position:absolute;
-    left:0;
-    top:0;
-    opacity:0;
-    width:100%;
-    height:100%;
-    cursor:pointer;
-  }
+  .upload-description{color:var(--muted); font-size:1rem; line-height:1.6; margin:0 0 2rem;}
+  .upload-features{display:flex; justify-content:center; gap:2rem; margin-bottom:2rem; flex-wrap:wrap;}
+  .feature-item{display:flex; flex-direction:column; align-items:center; gap:.5rem; font-size:.85rem; color:var(--muted);}
+  .feature-icon{font-size:1.5rem;}
+  .file-input-wrapper{position:relative; display:inline-block;}
+  .file-input-wrapper input[type="file"]{position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;}
   .file-input-btn{
-    display:inline-block;
-    padding:1rem 2rem;
-    background:var(--navy);
-    color:#EFF4F2;
-    border-radius:3px;
-    font-size:1rem;
-    font-weight:500;
-    cursor:pointer;
-    transition:background 0.2s;
+    display:inline-block; padding:1rem 2rem; background:var(--navy); color:#EFF4F2;
+    border:none; border-radius:4px; font-size:1rem; font-weight:500; cursor:pointer;
   }
-  .file-input-btn:hover{
-    background:var(--navy-2);
-  }
-  .file-name{
-    margin-top:1rem;
-    font-size:.85rem;
-    color:var(--muted);
-  }
-  .loading{
-    display:none;
-    margin-top:1rem;
-    color:var(--teal);
-    font-size:.9rem;
-  }
+  .file-input-btn:hover{background:var(--navy-2);}
+  .file-name{margin-top:1rem; font-size:.85rem; color:var(--muted);}
+  .loading{display:none; margin-top:1rem; color:var(--teal); font-size:.9rem;}
   .error{
-    display:none;
-    margin-top:1rem;
-    color:var(--rust);
-    font-size:.85rem;
-    padding:0.5rem;
-    background:rgba(168,85,46,0.1);
-    border-radius:3px;
+    display:none; margin-top:1rem; color:var(--bad); font-size:.85rem; text-align:left;
+    padding:.75rem 1rem; background:color-mix(in srgb, var(--bad) 10%, transparent); border-radius:4px;
   }
+  .required-cols{font-size:.8rem; color:var(--muted); margin-top:1.5rem;}
+  .required-cols code{background:var(--paper); padding:.1rem .35rem; border-radius:3px;}
 
-  /* Report Container - initially hidden */
-  .report-container{
-    display:none;
-  }
+  .report-container{display:none;}
 
   /* ---------- HERO ---------- */
   .hero{
@@ -173,297 +118,213 @@
     background:linear-gradient(160deg, var(--navy) 0%, var(--navy-2) 100%);
     color:#EFF4F2;
     overflow:hidden;
-    padding:3.4rem 1.5rem 3rem;
+    padding:3rem 1.5rem 2.8rem;
   }
-  .hero-contours{
-    position:absolute; inset:0; opacity:.35; pointer-events:none;
-  }
-  .hero-inner{
-    position:relative;
-    max-width:920px;
-    margin:0 auto;
-  }
+  .hero-contours{position:absolute; inset:0; opacity:.3; pointer-events:none;}
+  .hero-inner{position:relative; max-width:960px; margin:0 auto;}
   .hero-eyebrow{
     display:flex; justify-content:space-between; align-items:baseline;
-    font-size:.8rem; letter-spacing:.02em; color:#AFC6C4;
+    font-size:.8rem; letter-spacing:.04em; text-transform:uppercase; color:#B7CBDA;
     border-bottom:1px solid rgba(255,255,255,.18);
-    padding-bottom:.9rem; margin-bottom:1.8rem;
+    padding-bottom:.9rem; margin-bottom:1.6rem;
     flex-wrap:wrap; gap:.4rem;
   }
   .hero-title{
-    font-weight:500;
-    font-size:clamp(1.7rem, 4.2vw, 2.6rem);
-    line-height:1.15;
-    margin:0 0 1.9rem;
-    max-width:14ch;
-    color:#FBFBF9;
+    font-family:'Fraunces', serif; font-weight:500;
+    font-size:clamp(1.7rem, 4.2vw, 2.5rem); line-height:1.15;
+    margin:0 0 1.8rem; max-width:18ch; color:#FBFBF9;
   }
-  .hero-stat-row{
-    display:flex; gap:2.6rem; flex-wrap:wrap; align-items:flex-end;
-  }
+  .hero-stat-row{display:flex; gap:2.6rem; flex-wrap:wrap; align-items:flex-end;}
   .hero-stat-main .num{
-    font-family:'Fraunces', serif;
-    font-weight:400;
-    font-size:clamp(3.6rem, 11vw, 6.4rem);
-    line-height:.95;
-    color:#FBFBF9;
+    font-family:'Fraunces', serif; font-weight:400;
+    font-size:clamp(3.4rem, 10vw, 6rem); line-height:.95; color:#FBFBF9;
   }
   .hero-stat-main .num sup{font-size:.4em; font-weight:500; top:-0.6em;}
-  .hero-stat-main .cap{
-    font-size:.88rem; color:#AFC6C4; margin-top:.5rem; max-width:26ch;
-  }
-  .hero-side-stats{
-    display:flex; gap:2.2rem; margin-left:auto; flex-wrap:wrap;
-  }
-  .hero-side-stats div{min-width:100px;}
+  .hero-stat-main .cap{font-size:.9rem; color:#B7CBDA; margin-top:.5rem;}
+  .hero-delta{font-size:.9rem; margin-top:.45rem; color:#DCE6EE;}
+  .hero-delta .up{color:#8FE3AA;}
+  .hero-delta .down{color:#FFB4A8;}
+  .hero-side-stats{display:flex; gap:2.2rem; margin-left:auto; flex-wrap:wrap;}
+  .hero-side-stats div{min-width:96px;}
   .hero-side-stats .n{font-family:'Fraunces',serif; font-size:1.6rem; color:#FBFBF9;}
-  .hero-side-stats .l{font-size:.76rem; color:#AFC6C4; margin-top:.15rem;}
+  .hero-side-stats .l{font-size:.76rem; color:#B7CBDA; margin-top:.15rem;}
+
+  /* ---------- TOOLBAR ---------- */
+  .toolbar-wrap{max-width:960px; margin:0 auto; padding:0 1.5rem;}
+  .filter-bar{
+    margin-top:1.5rem; padding:.9rem 1.1rem;
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:6px;
+    display:flex; align-items:center; gap:.8rem 1rem; flex-wrap:wrap;
+  }
+  .filter-label{font-size:.8rem; color:var(--muted); font-weight:500;}
+  .chips{display:flex; flex-wrap:wrap; gap:.4rem; flex:1; min-width:0;}
+  .chip{
+    display:inline-flex; align-items:center; gap:.35rem; cursor:pointer;
+    font-size:.8rem; padding:.28rem .6rem; border:1px solid var(--line); border-radius:999px;
+    background:var(--paper); color:var(--ink); user-select:none;
+  }
+  .chip:has(input:checked){border-color:var(--teal); background:color-mix(in srgb, var(--teal) 10%, var(--paper-raised));}
+  .chip input{margin:0; cursor:pointer; accent-color:var(--teal);}
+  .chip-n{color:var(--muted); font-size:.72rem; font-variant-numeric:tabular-nums;}
+  .chip-all{font-weight:600;}
+  .tool-btns{display:flex; gap:.5rem; margin-left:auto;}
+  .btn{
+    padding:.5rem .9rem; border-radius:4px; font-size:.82rem; cursor:pointer;
+    border:1px solid var(--line-strong); background:var(--paper-raised); color:var(--ink);
+  }
+  .btn.primary{background:var(--navy); border-color:var(--navy); color:#EFF4F2;}
+  .btn:hover{filter:brightness(1.08);}
 
   /* ---------- MAIN ---------- */
-  main{max-width:920px; margin:0 auto; padding:0 1.5rem 4rem;}
-
-  .filter-bar {
-    margin: 1.5rem auto 0;
-    padding: 1rem 1.5rem;
-    background: var(--paper-raised);
-    border: 1px solid var(--line);
-    border-radius: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-  
-  #berthTypeCheckboxes {
-    max-height: 80px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--line) var(--paper);
-  }
-  
-  #berthTypeCheckboxes::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  #berthTypeCheckboxes::-webkit-scrollbar-track {
-    background: var(--paper);
-  }
-  
-  #berthTypeCheckboxes::-webkit-scrollbar-thumb {
-    background: var(--line);
-    border-radius: 3px;
-  }
-
-  section{margin-bottom:3.4rem;}
-  section + section{padding-top:0;}
-
+  main{max-width:960px; margin:0 auto; padding:1.5rem 1.5rem 3rem;}
+  section{margin-bottom:3.2rem;}
   h2.section-head{
-    font-family:'Fraunces', serif;
-    font-weight:500;
-    font-size:1.5rem;
-    margin:0 0 .3rem;
-    color:var(--ink);
+    font-family:'Fraunces', serif; font-weight:500; font-size:1.5rem;
+    margin:0 0 .3rem; color:var(--ink);
   }
-  .section-sub{
-    color:var(--muted); font-size:.92rem; margin:0 0 1.4rem; max-width:60ch;
-  }
+  .section-sub{color:var(--muted); font-size:.92rem; margin:0 0 1.2rem; max-width:68ch; line-height:1.5;}
+  .empty{padding:3rem 1rem; text-align:center; color:var(--muted);}
 
-  .lede{
-    font-size:1.12rem; line-height:1.65; max-width:66ch; color:var(--ink);
+  /* KPI cards */
+  .kpi-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin:0 0 2.8rem;}
+  .kpi{
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:6px;
+    padding:1.1rem 1.2rem 1rem; border-top:3px solid var(--teal);
   }
-  .lede strong{font-weight:600; color:var(--ink);}
-  .callout-list{
-    list-style:none; margin:1.6rem 0 0; padding:0;
-    display:grid; gap:.9rem;
-  }
+  .kpi.up{border-top-color:var(--good);}
+  .kpi.down{border-top-color:var(--bad);}
+  .kpi .k-label{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; font-weight:500;}
+  .kpi .k-value{font-family:'Fraunces', serif; font-size:2.1rem; line-height:1.1; margin:.35rem 0 .3rem; font-variant-numeric:tabular-nums;}
+  .kpi .k-sub{font-size:.8rem; color:var(--muted); line-height:1.45;}
+
+  .delta{font-weight:600; white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .delta.up{color:var(--good);}
+  .delta.down{color:var(--bad);}
+  .delta.flat{color:var(--muted);}
+
+  .lede{font-size:1.1rem; line-height:1.65; max-width:70ch; color:var(--ink); margin:.6rem 0 0;}
+  .lede strong{font-weight:600;}
+  .callout-list{list-style:none; margin:1.4rem 0 0; padding:0; display:grid; gap:.9rem;}
   .callout-list li{
-    display:grid; grid-template-columns:3px 1fr; gap:.9rem;
+    display:grid; grid-template-columns:4px 1fr; gap:.9rem;
     font-size:.98rem; line-height:1.55; color:var(--ink);
   }
   .callout-list li span.bar{background:var(--line-strong); border-radius:2px;}
-  .callout-list li.up span.bar{background:var(--seafoam);}
-  .callout-list li.down span.bar{background:var(--rust);}
+  .callout-list li.up span.bar{background:var(--good);}
+  .callout-list li.down span.bar{background:var(--bad);}
   .callout-list li b{font-weight:600;}
 
   .chart-card{
-    background:var(--paper-raised);
-    border:1px solid var(--line);
-    border-radius:3px;
-    padding:1.6rem 1.5rem 1.2rem;
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:6px;
+    padding:1.4rem 1.4rem 1.1rem;
   }
-  .chart-card .cc-head{
-    display:flex; justify-content:space-between; align-items:baseline;
-    margin-bottom:1.1rem; flex-wrap:wrap; gap:.4rem;
-  }
-  .chart-card .cc-head h3{
-    font-family:'Fraunces', serif; font-weight:500; font-size:1.1rem; margin:0; color:var(--ink);
-  }
-  .chart-card .cc-head .note{font-size:.8rem; color:var(--muted);}
-  .chart-wrap{position:relative; height:280px;}
-  .chart-wrap.short{height:220px;}
+  .chart-card + .chart-card{margin-top:1rem;}
+  .cc-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:.6rem;}
+  .cc-head h3{font-family:'Fraunces', serif; font-weight:500; font-size:1.1rem; margin:0; color:var(--ink);}
+  .cc-head .note{font-size:.8rem; color:var(--muted);}
+  .chart-wrap{position:relative; height:300px;}
+  .chart-wrap.short{height:230px;}
   .svg-chart{width:100%; height:100%; display:block;}
   .svg-chart svg{width:100%; height:100%; display:block; overflow:visible;}
-  
-  /* Tooltip styles */
-  .chart-tooltip {
-    position: absolute;
-    background: var(--navy);
-    color: #EFF4F2;
-    padding: 0.5rem 0.75rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    white-space: nowrap;
+  .svg-chart text{font-family:'IBM Plex Sans', sans-serif;}
+  .svg-chart text.axis{font-size:11px; fill:var(--muted);}
+  .svg-chart text.val{font-size:11px; fill:var(--ink); font-variant-numeric:tabular-nums;}
+  .svg-chart text.val.strong{font-weight:600;}
+  .svg-chart line.grid{stroke:var(--line); stroke-width:1;}
+  .svg-chart .annot{font-size:11.5px; font-weight:600; pointer-events:none; paint-order:stroke; stroke:var(--paper-raised); stroke-width:4px; stroke-linejoin:round;}
+
+  .seg{display:inline-flex; border:1px solid var(--line-strong); border-radius:4px; overflow:hidden;}
+  .seg button{border:none; background:transparent; color:var(--muted); padding:.3rem .8rem; font-size:.8rem; cursor:pointer;}
+  .seg button.active{background:var(--navy); color:#EFF4F2;}
+
+  .chart-tooltip{
+    position:absolute; background:var(--navy); color:#EFF4F2;
+    padding:.5rem .75rem; border-radius:4px; font-size:.85rem;
+    pointer-events:none; opacity:0; transition:opacity .15s; z-index:100;
+    box-shadow:0 2px 8px rgba(0,0,0,.2); white-space:nowrap;
   }
-  .chart-tooltip.visible {
-    opacity: 1;
-  }
-  .chart-tooltip .tooltip-label {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-    color: #AFC6C4;
-  }
-  .chart-tooltip .tooltip-value {
-    font-size: 1rem;
-    font-weight: 600;
-  }
-  
-  /* Interactive chart elements */
-  .chart-point {
-    cursor: pointer;
-    transition: r 0.2s, stroke-width 0.2s;
-  }
-  .chart-point:hover {
-    r: 6;
-    stroke-width: 3;
-  }
-  .chart-bar {
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .chart-bar:hover {
-    opacity: 1 !important;
-  }
-  
+  .chart-tooltip.visible{opacity:1;}
+  .chart-tooltip .tooltip-label{font-weight:500; margin-bottom:.2rem; color:#B7CBDA;}
+  .chart-tooltip .tooltip-value{font-size:1rem; font-weight:600;}
+  .chart-point, .chart-bar{cursor:pointer;}
+  .chart-bar:hover{opacity:1 !important;}
+
   .chart-foot{
-    font-size:.78rem; color:var(--muted); margin-top:.9rem; padding-top:.7rem;
-    border-top:1px solid var(--line);
+    font-size:.8rem; color:var(--muted); margin-top:.9rem; padding-top:.7rem;
+    border-top:1px solid var(--line); line-height:1.5;
   }
 
-  /* legend chips */
-  .legend-row{display:flex; flex-wrap:wrap; gap:1rem; margin-top:.9rem;}
+  .legend-row{display:flex; flex-wrap:wrap; gap:.5rem 1.1rem; margin-top:.8rem;}
   .legend-chip{display:flex; align-items:center; gap:.4rem; font-size:.8rem; color:var(--muted);}
-  .legend-chip i{width:10px; height:10px; border-radius:2px; display:inline-block;}
+  .legend-chip i{width:12px; height:12px; border-radius:2px; display:inline-block;}
+  .legend-chip i.dash{height:0; border-top:2px dashed var(--ink); opacity:.6; border-radius:0; width:16px;}
+  .legend-chip i.ring{border:2px solid var(--teal); border-radius:50%; background:var(--paper-raised); width:10px; height:10px;}
 
-  /* table */
-  table.inv{width:100%; border-collapse:collapse; font-size:.92rem;}
+  /* tables */
+  .table-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  table.inv{width:100%; border-collapse:collapse; font-size:.9rem;}
   table.inv th{
-    text-align:left; font-weight:500; color:var(--muted); font-size:.76rem;
-    padding:.55rem .6rem; border-bottom:1px solid var(--line-strong);
+    text-align:left; font-weight:500; color:var(--muted); font-size:.74rem;
+    text-transform:uppercase; letter-spacing:.04em;
+    padding:.55rem .6rem; border-bottom:1px solid var(--line-strong); white-space:nowrap;
   }
-  table.inv td{padding:.65rem .6rem; border-bottom:1px solid var(--line);}
-  table.inv tr:last-child td{border-bottom:none;}
-  table.inv td.num, table.inv th.num{text-align:right; font-variant-numeric:tabular-nums;}
-  .occ-bar-wrap{display:flex; align-items:center; gap:.6rem;}
-  .occ-bar{flex:1; height:6px; background:var(--line); border-radius:3px; overflow:hidden; min-width:70px;}
-  .occ-bar > span{display:block; height:100%; background:var(--teal); border-radius:3px;}
-  .occ-bar.low > span{background:var(--rust);}
+  table.inv td{padding:.6rem .6rem; border-bottom:1px solid var(--line);}
+  table.inv tr.total td{border-top:2px solid var(--line-strong); border-bottom:none; font-weight:600;}
+  table.inv td.num, table.inv th.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .occ-bar{height:8px; background:var(--line); border-radius:4px; overflow:hidden; min-width:80px;}
+  .occ-bar > span{display:block; height:100%; background:var(--teal); border-radius:4px;}
+  .occ-bar.low > span{background:var(--bad);}
   .occ-bar.mid > span{background:var(--brass);}
+  .badge{
+    display:inline-block; font-size:.66rem; padding:.05rem .4rem; margin-left:.35rem; border-radius:999px;
+    background:var(--line); color:var(--muted); vertical-align:middle; white-space:nowrap;
+  }
+
+  table.heat{width:100%; border-collapse:separate; border-spacing:3px; font-size:.86rem;}
+  table.heat th{font-weight:500; color:var(--muted); font-size:.74rem; padding:.3rem .4rem; text-align:center; white-space:nowrap;}
+  table.heat th:first-child{text-align:left;}
+  table.heat td{padding:.5rem .4rem; white-space:nowrap;}
+  table.heat td.name{padding-left:0;}
+  table.heat td.hm{text-align:center; border-radius:3px; font-weight:600; font-variant-numeric:tabular-nums; min-width:52px;}
+  table.heat td.hm.na{color:var(--muted); font-weight:400;}
+  table.heat td.num{text-align:right; font-variant-numeric:tabular-nums; color:var(--muted);}
+  table.heat tr.total td{border-top:1px solid var(--line-strong);}
+  table.heat tr.total td.name{font-weight:600;}
+  .heat-legend{display:flex; align-items:center; gap:.5rem; font-size:.75rem; color:var(--muted); margin-top:.8rem;}
+  .heat-legend .grad{width:140px; height:8px; border-radius:4px; background:linear-gradient(90deg, var(--paper-raised), var(--heat)); border:1px solid var(--line);}
+
+  .method ul{margin:.4rem 0 0; padding-left:1.1rem; color:var(--muted); font-size:.88rem; line-height:1.6;}
+  .method li{margin-bottom:.35rem;}
+  .method b{color:var(--ink); font-weight:600;}
 
   footer{
-    max-width:920px; margin:0 auto; padding:0 1.5rem 2rem;
-    color:var(--muted); font-size:.85rem; line-height:1.4;
-    border-top:1px solid var(--line); padding-top:1.2rem;
-    text-align:center;
+    max-width:960px; margin:0 auto; padding:1.2rem 1.5rem 2rem;
+    color:var(--muted); font-size:.82rem; line-height:1.4;
+    border-top:1px solid var(--line); text-align:center;
   }
 
   @media (max-width:640px){
-    .hero{padding:2.4rem 1.2rem 2.2rem;}
-    main{padding:2.2rem 1.2rem 3rem;}
-    .hero-side-stats{margin-left:0;}
-    .chart-wrap{height:230px;}
+    .hero{padding:2.2rem 1rem 2rem;}
+    .toolbar-wrap{padding:0 1rem;}
+    main{padding:1.2rem 1rem 2.5rem;}
+    .hero-side-stats{margin-left:0; gap:1.4rem;}
+    .chart-card{padding:1.1rem .9rem .9rem;}
+    .chart-wrap{height:250px;}
+    .tool-btns{margin-left:0;}
+    .chips{flex-basis:100%;}
   }
 
-  /* Print Styles */
-  @media print {
-    body {
-      background: white !important;
-      color: black !important;
-    }
-    :root {
-      --paper: white !important;
-      --paper-raised: white !important;
-      --ink: black !important;
-      --muted: #333 !important;
-      --navy: #000 !important;
-      --navy-2: #000 !important;
-      --teal: #000 !important;
-      --seafoam: #000 !important;
-      --rust: #000 !important;
-      --brass: #000 !important;
-      --line: #ccc !important;
-      --line-strong: #999 !important;
-    }
-    .upload-section, .filter-bar {
-      display: none !important;
-    }
-    .hero {
-      background: white !important;
-      color: black !important;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-    .hero-contours {
-      display: none;
-    }
-    .hero-eyebrow {
-      color: #333 !important;
-      border-bottom-color: #000 !important;
-    }
-    .hero-title {
-      color: #000 !important;
-    }
-    .hero-stat-main .num {
-      color: #000 !important;
-    }
-    .hero-stat-main .cap {
-      color: #333 !important;
-    }
-    .hero-side-stats .n {
-      color: #000 !important;
-    }
-    .hero-side-stats .l {
-      color: #333 !important;
-    }
-    .chart-card {
-      border: 1px solid #000 !important;
-      page-break-inside: avoid;
-    }
-    section {
-      page-break-inside: avoid;
-    }
-    .svg-chart svg {
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-    table.inv {
-      border: 1px solid #000 !important;
-    }
-    table.inv th {
-      border-bottom: 2px solid #000 !important;
-    }
-    table.inv td {
-      border-bottom: 1px solid #ccc !important;
-    }
-    footer {
-      border-top: 1px solid #000 !important;
-      text-align: center !important;
-    }
+  /* Print — keeps colours so the report can go straight into a board pack */
+  @media print{
+    @page{margin:12mm;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    body{background:#fff;}
+    .upload-section, .toolbar-wrap, .seg, .chart-tooltip{display:none !important;}
+    .hero{padding:1.6rem 1.2rem;}
+    main{padding:1rem 0 0;}
+    .kpi, .chart-card, .callout-list li, table tr{break-inside:avoid;}
+    h2.section-head{break-after:avoid;}
+    section{margin-bottom:1.8rem;}
   }
 </style>
 </head>
@@ -475,30 +336,26 @@
     <div class="upload-icon">📊</div>
     <h2>Berth Occupancy Analytics</h2>
     <p class="upload-description">
-      Upload your Excel file to generate occupancy reports with interactive charts, 
-      berth type filtering, and seasonal analysis.
+      Upload your occupancy export to generate a management-ready report: headline KPIs,
+      executive summary, trends by berth type, seasonality and a current snapshot.
     </p>
     <div class="upload-features">
-      <div class="feature-item">
-        <span class="feature-icon">📈</span>
-        <span>Interactive Charts</span>
-      </div>
-      <div class="feature-item">
-        <span class="feature-icon">🔍</span>
-        <span>Type Filtering</span>
-      </div>
-      <div class="feature-item">
-        <span class="feature-icon">📅</span>
-        <span>Seasonal Analysis</span>
-      </div>
+      <div class="feature-item"><span class="feature-icon">📈</span><span>Trend &amp; KPIs</span></div>
+      <div class="feature-item"><span class="feature-icon">🔍</span><span>Berth type breakdown</span></div>
+      <div class="feature-item"><span class="feature-icon">📅</span><span>Seasonal analysis</span></div>
+      <div class="feature-item"><span class="feature-icon">🖨️</span><span>Print-ready</span></div>
     </div>
     <div class="file-input-wrapper">
-      <button class="file-input-btn">Upload Excel File</button>
+      <button class="file-input-btn" type="button">Upload Excel File</button>
       <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" />
     </div>
     <div class="file-name" id="fileName"></div>
-    <div class="loading" id="loading">Processing data...</div>
+    <div class="loading" id="loading">Processing data…</div>
     <div class="error" id="error"></div>
+    <div class="required-cols">
+      Required columns: <code>Berth</code> <code>BerthType</code> <code>Year</code> <code>Month</code>
+      <code>OccupiedDays</code> <code>DaysInMonth</code>
+    </div>
   </div>
 </div>
 
@@ -514,14 +371,15 @@
   </svg>
   <div class="hero-inner">
     <div class="hero-eyebrow">
-      <span id="hero-marina-name">Westhaven Marina · Berth Occupancy</span>
+      <span id="hero-marina-name">Berth occupancy report</span>
       <span id="hero-period"></span>
     </div>
-    <h1 class="hero-title" id="hero-title-text">Five years of berth occupancy, at a glance</h1>
+    <h1 class="hero-title" id="hero-title-text">Berth occupancy, at a glance</h1>
     <div class="hero-stat-row">
       <div class="hero-stat-main">
         <div class="num" id="hero-num">—</div>
-        <div class="cap">Fleet-wide occupancy, <span id="hero-latest"></span></div>
+        <div class="cap" id="hero-cap"></div>
+        <div class="hero-delta" id="hero-delta"></div>
       </div>
       <div class="hero-side-stats">
         <div>
@@ -530,7 +388,7 @@
         </div>
         <div>
           <div class="n" id="stat-peak">—</div>
-          <div class="l" id="stat-peak-label">five-year peak</div>
+          <div class="l" id="stat-peak-label">peak</div>
         </div>
         <div>
           <div class="n" id="stat-categories">—</div>
@@ -541,1068 +399,885 @@
   </div>
 </div>
 
-<!-- Filter Bar - stays visible after upload -->
-<div class="filter-bar" id="filterBar" style="display: none;">
-  <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-    <div style="display: flex; align-items: center; gap: 0.5rem;">
-      <label style="font-size: 0.85rem; color: var(--muted); font-weight: 500;">Filter by berth type:</label>
-      <div id="berthTypeCheckboxes" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; max-height: 100px; overflow-y: auto; padding: 0.5rem; border: 1px solid var(--line); border-radius: 3px; background: var(--paper);">
-        <!-- Checkboxes will be populated dynamically -->
-      </div>
+<div class="toolbar-wrap">
+  <div class="filter-bar" id="filterBar">
+    <span class="filter-label">Berth types</span>
+    <div class="chips" id="typeFilters"></div>
+    <div class="tool-btns">
+      <button class="btn" id="newFileBtn" type="button">Load another file</button>
+      <button class="btn primary" id="printBtn" type="button">Print / Save PDF</button>
     </div>
-    <div style="display: flex; align-items: center; gap: 0.5rem;">
-      <input type="checkbox" id="yearOnlyToggle" style="cursor: pointer;">
-      <label for="yearOnlyToggle" style="font-size: 0.85rem; color: var(--muted); cursor: pointer;">Show years only</label>
-    </div>
-    <button id="printBtn" style="padding: 0.5rem 1rem; background: var(--navy); color: #EFF4F2; border: none; border-radius: 3px; font-size: 0.85rem; cursor: pointer;">📄 Print Report</button>
   </div>
 </div>
 
 <main>
+  <div class="empty" id="emptyState" hidden>Select at least one berth type to see the report.</div>
 
-  <section id="summary">
-    <h2 class="section-head">What the numbers show</h2>
-    <p class="lede" id="summary-text">
-      Upload your data to see occupancy insights and trends.
-    </p>
-    <ul class="callout-list" id="callout-list">
-      <!-- Dynamic callouts will be inserted here -->
-    </ul>
-  </section>
+  <div id="reportBody">
+    <div class="kpi-grid" id="kpiGrid"></div>
 
-  <section id="trend">
-    <h2 class="section-head">Overall occupancy, month by month</h2>
-    <p class="section-sub">Fleet-wide occupancy across all berths, weighted by berth-days.</p>
-    <div class="chart-card">
-      <div class="cc-head">
-        <h3 id="trend-chart-title">Monthly Trend</h3>
-        <span class="note">monthly, all berth types</span>
+    <section id="summary">
+      <h2 class="section-head">Executive summary</h2>
+      <p class="lede" id="summary-text"></p>
+      <ul class="callout-list" id="callout-list"></ul>
+    </section>
+
+    <section id="trend">
+      <h2 class="section-head">Overall occupancy trend</h2>
+      <p class="section-sub">Occupied berth-days as a share of available berth-days, for the selected berth types.</p>
+      <div class="chart-card">
+        <div class="cc-head">
+          <h3 id="trend-chart-title">Monthly trend</h3>
+          <div class="seg" role="group" aria-label="Trend view">
+            <button type="button" data-view="monthly" class="active">Monthly</button>
+            <button type="button" data-view="annual">Annual</button>
+          </div>
+        </div>
+        <div class="chart-wrap"><div id="chartOverall" class="svg-chart"></div></div>
+        <div class="legend-row" id="trendLegend"></div>
+        <div class="chart-foot" id="trend-chart-foot"></div>
       </div>
-      <div class="chart-wrap"><div id="chartOverall" class="svg-chart"></div></div>
-      <div class="chart-foot" id="trend-chart-foot"></div>
-    </div>
-  </section>
+    </section>
 
-  <section id="bytype">
-    <h2 class="section-head">Occupancy by berth type, year over year</h2>
-    <p class="section-sub">Annual average for the major categories. Partial years may be included.</p>
-    <div class="chart-card">
-      <div class="cc-head">
-        <h3>Annual occupancy by category</h3>
-        <span class="note">%</span>
+    <section id="bytype">
+      <h2 class="section-head">Performance by berth type</h2>
+      <p class="section-sub">Annual occupancy for each category, weighted by berth-days.</p>
+      <div class="chart-card">
+        <div class="cc-head">
+          <h3>Largest categories, year by year</h3>
+          <span class="note" id="bytype-note"></span>
+        </div>
+        <div class="chart-wrap"><div id="chartByType" class="svg-chart"></div></div>
+        <div class="legend-row" id="typeLegend"></div>
       </div>
-      <div class="chart-wrap"><div id="chartByType" class="svg-chart"></div></div>
-      <div class="legend-row" id="typeLegend"></div>
-    </div>
-  </section>
-
-  <section id="season">
-    <h2 class="section-head">Seasonal pattern</h2>
-    <p class="section-sub">Average occupancy by calendar month, pooled across all years.</p>
-    <div class="chart-card">
-      <div class="cc-head">
-        <h3>Occupancy by month of year</h3>
-        <span class="note">all years combined</span>
+      <div class="chart-card">
+        <div class="cc-head">
+          <h3>All categories — annual occupancy (%)</h3>
+        </div>
+        <div class="table-scroll"><table class="heat" id="heatTable"></table></div>
+        <div class="heat-legend"><span>0%</span><span class="grad"></span><span>100%</span></div>
+        <div class="chart-foot" id="heat-foot"></div>
       </div>
-      <div class="chart-wrap short"><div id="chartSeason" class="svg-chart"></div></div>
-    </div>
-  </section>
+    </section>
 
-  <section id="inventory">
-    <h2 class="section-head">Current snapshot</h2>
-    <p class="section-sub" id="inv-sub">Berth count and occupancy by category, latest month on record.</p>
-    <div class="chart-card">
-      <table class="inv">
-        <thead>
-          <tr>
-            <th>Berth type</th>
-            <th class="num">Berths</th>
-            <th style="width:38%;">Occupancy</th>
-            <th class="num">%</th>
-          </tr>
-        </thead>
-        <tbody id="inv-body"></tbody>
-      </table>
-    </div>
-  </section>
+    <section id="season">
+      <h2 class="section-head">Seasonal pattern</h2>
+      <p class="section-sub" id="season-sub">Average occupancy by calendar month, all years combined and weighted by berth-days.</p>
+      <div class="chart-card">
+        <div class="cc-head">
+          <h3>Occupancy by month of year</h3>
+          <span class="note">all years combined</span>
+        </div>
+        <div class="chart-wrap short"><div id="chartSeason" class="svg-chart"></div></div>
+        <div class="chart-foot" id="season-foot"></div>
+      </div>
+    </section>
 
+    <section id="inventory">
+      <h2 class="section-head">Current snapshot</h2>
+      <p class="section-sub" id="inv-sub"></p>
+      <div class="chart-card">
+        <div class="table-scroll">
+          <table class="inv">
+            <thead>
+              <tr>
+                <th>Berth type</th>
+                <th class="num">Berths</th>
+                <th style="width:30%;">Occupancy</th>
+                <th class="num">%</th>
+                <th class="num" id="inv-yoy-head">vs last year</th>
+                <th class="num">Empty berths</th>
+              </tr>
+            </thead>
+            <tbody id="inv-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="method" class="method">
+      <h2 class="section-head">Notes &amp; methodology</h2>
+      <ul id="methodList"></ul>
+    </section>
+  </div>
 </main>
 
-<footer>
-  Westhaven Marina Berth Occupancy Analytics Report
-</footer>
+<footer id="footer"></footer>
 
 </div>
 
 <script>
-// Global data storage
-let DATA = null;
-let showYearsOnly = false; // Toggle for year-only display
-let selectedBerthTypes = new Set(); // Multiple berth type selection
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const NUM_WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
 
-// Load demo data on page load
-window.addEventListener('DOMContentLoaded', () => {
-  // Don't auto-load demo data - let user choose
-  document.getElementById('uploadSection').style.display = 'block';
-  document.getElementById('reportContainer').style.display = 'none';
+// Column headers are matched exactly after normalising (case, spaces, punctuation ignored)
+const REQUIRED = { berth: 'Berth', type: 'BerthType', year: 'Year', month: 'Month', occ: 'OccupiedDays', days: 'DaysInMonth' };
+const ALIASES = {
+  marina: ['marina', 'marinaname', 'site'],
+  berth: ['berth', 'berthid', 'berthno', 'berthnumber', 'berthname', 'berthcode'],
+  type: ['berthtype', 'type', 'category', 'berthcategory'],
+  year: ['year'],
+  month: ['month', 'monthno', 'monthnumber'],
+  occ: ['occupieddays', 'daysoccupied'],
+  days: ['daysinmonth', 'availabledays', 'totaldays']
+};
+const SMALL_TYPE = 5;        // categories below this many berths are flagged as small samples
+const MIN_TYPE_FOR_TREND = 10; // categories need this many berths to feature in "biggest mover" findings
+const TYPE_COLORS = ['var(--c1)', 'var(--c2)', 'var(--c3)', 'var(--c4)', 'var(--c5)'];
+
+let MODEL = null;
+let VIEW = null;
+let selected = new Set();
+let trendMode = 'monthly';
+
+// ---------- helpers ----------
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = (s) => String(s ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const pct = (v) => (v == null || !isFinite(v) ? '—' : v.toFixed(1) + '%');
+const fmtInt = (n) => Math.round(n).toLocaleString();
+const dirCls = (d) => (d == null ? 'flat' : d > 0.05 ? 'up' : d < -0.05 ? 'down' : 'flat');
+const arrow = (d) => ({ up: '▲', down: '▼', flat: '▬' }[dirCls(d)]);
+const pts = (d) => (d == null ? '—' : (d > 0.05 ? '+' : d < -0.05 ? '−' : '±') + Math.abs(d).toFixed(1) + ' pts');
+const deltaTag = (d) => (d == null ? '<span class="delta flat">—</span>' : `<span class="delta ${dirCls(d)}">${arrow(d)} ${pts(d)}</span>`);
+function changePhrase(d, ref) {
+  if (Math.abs(d) < 0.05) return `unchanged on ${ref}`;
+  return `${d < 0 ? 'down' : 'up'} ${Math.abs(d).toFixed(1)} pts on ${ref}`;
+}
+function spanWords(n) {
+  if (n < 12) return `${NUM_WORDS[n] || n} month${n === 1 ? '' : 's'}`;
+  const y = n / 12, r = Math.round(y);
+  if (Math.abs(n - r * 12) <= 1) return `${NUM_WORDS[r] || r} year${r === 1 ? '' : 's'}`;
+  return `${y.toFixed(1)} years`;
+}
+function cellStr(v) {
+  if (v == null) return '';
+  if (v instanceof Date) return v.toISOString().slice(0, 10);
+  return String(v).trim();
+}
+function parseYear(v) {
+  if (v instanceof Date) return v.getFullYear();
+  const y = parseInt(v, 10);
+  return y >= 1900 && y <= 2200 ? y : null;
+}
+function parseMonth(v) {
+  if (v instanceof Date) return v.getMonth() + 1;
+  const n = parseInt(v, 10);
+  if (n >= 1 && n <= 12) return n;
+  const i = MONTHS.findIndex((m) => String(v).trim().toLowerCase().startsWith(m.toLowerCase()));
+  return i >= 0 ? i + 1 : null;
+}
+
+// ---------- events ----------
+$('fileInput').addEventListener('change', handleFileUpload);
+$('printBtn').addEventListener('click', () => window.print());
+$('newFileBtn').addEventListener('click', () => {
+  $('reportContainer').style.display = 'none';
+  $('uploadSection').style.display = 'block';
+  $('fileInput').value = '';
+  $('fileName').textContent = '';
+  window.scrollTo(0, 0);
+});
+document.querySelectorAll('.seg button').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    trendMode = btn.dataset.view;
+    document.querySelectorAll('.seg button').forEach((b) => b.classList.toggle('active', b === btn));
+    if (VIEW) renderTrend();
+  });
+});
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { if (VIEW) renderCharts(); }, 150);
 });
 
-// Year-only toggle (in filter bar)
-document.getElementById('yearOnlyToggle').addEventListener('change', (e) => {
-  showYearsOnly = e.target.checked;
-  if (DATA) {
-    renderReport(); // Re-render with new display mode
-  }
-});
-
-// Print button
-document.getElementById('printBtn').addEventListener('click', () => {
-  window.print();
-});
-
-// File upload handling
-document.getElementById('fileInput').addEventListener('change', handleFileUpload);
-
+function showError(msg) {
+  const box = $('error');
+  if (!msg) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  box.innerHTML = `<div style="margin-bottom:.4rem;"><strong>Error:</strong> ${esc(msg)}</div>
+    <div style="font-size:.8rem;">Check the file is a valid .xlsx, .xls or .csv export and that the first rows contain the required column headers.</div>`;
+}
 
 function handleFileUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
-
-  console.log('=== NEW FILE UPLOAD ===');
-  console.log('File selected:', file.name, file.size, 'bytes');
-  console.log('File type:', file.type);
-  console.log('Last modified:', new Date(file.lastModified));
-  
-  document.getElementById('fileName').textContent = file.name;
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('error').style.display = 'none';
+  $('fileName').textContent = file.name;
+  $('loading').style.display = 'block';
+  showError('');
 
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = (e) => {
     try {
-      console.log('File loaded, size:', e.target.result.byteLength, 'bytes');
-      console.log('Processing workbook...');
-      
-      const data = new Uint8Array(e.target.result);
-      
-      // Try different reading options to handle various Excel formats
-      let workbook;
-      try {
-        // Try binary string format first (more compatible)
-        const binaryString = Array.from(data).map(byte => String.fromCharCode(byte)).join('');
-        workbook = XLSX.read(binaryString, { type: 'binary' });
-        console.log('Binary format succeeded');
-      } catch (firstError) {
-        console.log('Binary format failed, trying array format:', firstError.message);
-        try {
-          workbook = XLSX.read(data, { type: 'array' });
-          console.log('Array format succeeded');
-        } catch (secondError) {
-          console.log('Array format failed, trying with more options:', secondError.message);
-          try {
-            // Try with more options for older formats
-            workbook = XLSX.read(data, { type: 'array', cellDates: true, cellStyles: true });
-            console.log('Array format with options succeeded');
-          } catch (thirdError) {
-            console.error('All parsing attempts failed:', thirdError);
-            throw new Error(`Unable to parse Excel file. Please ensure it's a valid .xlsx or .xls file. Error: ${thirdError.message}`);
-          }
-        }
-      }
-      
-      console.log('Workbook loaded successfully, sheets:', workbook.SheetNames);
-      console.log('Sheet count:', workbook.SheetNames.length);
-      
-      if (workbook.SheetNames.length === 0) {
-        throw new Error('The Excel file contains no sheets');
-      }
-      
-      // Clear previous data explicitly
-      console.log('Clearing previous data...');
-      DATA = null;
-      
-      // Process the workbook
-      processWorkbook(workbook);
-      
-      // Verify data was updated
-      console.log('Data after processing:', DATA ? 'DATA exists' : 'DATA is null');
-      if (DATA && DATA.overall && DATA.overall.length > 0) {
-        console.log('Sample of new data:', {
-          firstValue: DATA.overall[0],
-          lastValue: DATA.overall[DATA.overall.length - 1],
-          totalPoints: DATA.overall.length
-        });
-      }
-      
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('uploadSection').style.display = 'none';
-      document.getElementById('reportContainer').style.display = 'block';
-    } catch (error) {
-      console.error('Error processing file:', error);
-      document.getElementById('loading').style.display = 'none';
-      const errorDiv = document.getElementById('error');
-      errorDiv.style.display = 'block';
-      errorDiv.innerHTML = `
-        <div style="margin-bottom: 0.5rem;"><strong>Error:</strong> ${error.message}</div>
-        <div style="margin-bottom: 0.5rem;">If you're having trouble uploading:</div>
-        <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.8rem;">
-          <li>Ensure the file is a valid Excel (.xlsx, .xls) or CSV file</li>
-          <li>Check that the file is not corrupted</li>
-          <li>Try saving the Excel file in a different format</li>
-          <li>Make sure the file contains the required columns: Berth, BerthType, Year, Month, OccupiedDays, DaysInMonth</li>
-        </ul>
-      `;
+      const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array', cellDates: true });
+      loadWorkbook(workbook, file.name);
+    } catch (err) {
+      console.error(err);
+      showError(err.message);
+    } finally {
+      $('loading').style.display = 'none';
     }
   };
-  
-  reader.onerror = function(error) {
-    console.error('FileReader error:', error);
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('error').style.display = 'block';
-    document.getElementById('error').textContent = 'Error reading file: ' + error;
+  reader.onerror = () => {
+    $('loading').style.display = 'none';
+    showError('The file could not be read.');
   };
-  
   reader.readAsArrayBuffer(file);
 }
 
-function processWorkbook(workbook) {
-  try {
-    console.log('=== PROCESSING WORKBOOK ===');
-    
-    // Get the first sheet
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    
-    console.log('Processing sheet:', sheetName);
-    
-    // Convert to JSON
-    const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-    
-    console.log('Excel data rows:', jsonData.length);
-    console.log('First row (headers):', jsonData[0]);
-    console.log('Sample data row 2:', jsonData[1]);
-    console.log('Sample data row 3:', jsonData[2]);
-    
-    // Clear previous data explicitly
-    DATA = null;
-    console.log('Previous data cleared');
-    
-    // Parse the data based on expected structure
-    DATA = parseExcelData(jsonData);
-    
-    if (!DATA) {
-      throw new Error('Failed to parse Excel data');
-    }
-    
-    console.log('=== PARSED DATA SUMMARY ===');
-    console.log('Total months:', DATA.labels.length);
-    console.log('Date range:', DATA.start_date, 'to', DATA.end_date);
-    console.log('Current occupancy:', DATA.current_overall);
-    console.log('Peak occupancy:', DATA.peak_overall, 'in', DATA.peak_date);
-    console.log('Berth types:', Object.keys(DATA.berthTypes));
-    console.log('Sample overall values:', DATA.overall.slice(0, 5));
-    
-    // Populate berth type dropdown
-    populateBerthTypeDropdown();
-    
-    // Show filter bar
-    document.getElementById('filterBar').style.display = 'flex';
-    
-    // Render the report
-    renderReport();
-  } catch (error) {
-    console.error('Error processing workbook:', error);
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('error').style.display = 'block';
-    document.getElementById('error').textContent = 'Error processing Excel data: ' + error.message;
+// ---------- parsing ----------
+function matchColumns(header) {
+  const h = header.map(norm);
+  const idx = {}, missing = [];
+  for (const [key, aliases] of Object.entries(ALIASES)) {
+    idx[key] = aliases.reduce((found, a) => (found >= 0 ? found : h.indexOf(a)), -1);
+    if (REQUIRED[key] && idx[key] < 0) missing.push(REQUIRED[key]);
   }
+  return { ok: missing.length === 0, idx, missing };
 }
 
-function parseExcelData(jsonData) {
-  // Parse berth-level data and aggregate to monthly
-  if (!jsonData || jsonData.length === 0) {
-    console.error('No data found in Excel file');
-    return null;
+function loadWorkbook(workbook, fileName) {
+  if (!workbook.SheetNames.length) throw new Error('The file contains no sheets.');
+
+  // Use the first sheet (and first of its top 10 rows) that has the required headers
+  let found = null, firstMissing = null;
+  for (const name of workbook.SheetNames) {
+    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[name], { header: 1, blankrows: false });
+    for (let h = 0; h < Math.min(10, rows.length); h++) {
+      const m = matchColumns(rows[h] || []);
+      if (m.ok) { found = { rows, headerRow: h, idx: m.idx, sheet: name }; break; }
+      if (!firstMissing) firstMissing = m.missing;
+    }
+    if (found) break;
   }
-  
-  const headers = jsonData[0];
-  console.log('Excel headers:', headers);
-  
-  // Find column indices
-  const berthCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('berth') && !h.toString().toLowerCase().includes('berthtype'));
-  const berthTypeCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('berthtype'));
-  const yearCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('year'));
-  const monthCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('month'));
-  const occupiedDaysCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('occupieddays'));
-  const daysInMonthCol = headers.findIndex(h => h && h.toString().toLowerCase().includes('daysinmonth'));
-  
-  console.log('Column indices:', { berthCol, berthTypeCol, yearCol, monthCol, occupiedDaysCol, daysInMonthCol });
-  
-  // Sample some raw data to verify file content
-  console.log('Sample raw rows:');
-  for (let i = 1; i <= Math.min(5, jsonData.length); i++) {
-    console.log(`Row ${i}:`, jsonData[i]);
+  if (!found) throw new Error(`Required column(s) not found: ${(firstMissing || Object.values(REQUIRED)).join(', ')}.`);
+
+  const model = buildModel(found.rows.slice(found.headerRow + 1), found.idx);
+  if (!model.months.length) throw new Error('No usable data rows were found.');
+  model.fileName = fileName;
+  model.sheet = found.sheet;
+
+  MODEL = model;
+  selected = new Set(model.types);
+  buildFilters();
+
+  $('uploadSection').style.display = 'none';
+  $('reportContainer').style.display = 'block'; // must be visible before charts measure their width
+  renderReport();
+  window.scrollTo(0, 0);
+}
+
+function buildModel(rows, idx) {
+  const byKey = new Map();
+  const berths = {};
+  let marina = '', used = 0, skipped = 0, adjusted = 0;
+
+  for (const row of rows) {
+    if (!row || !row.length) continue;
+    const type = cellStr(row[idx.type]);
+    const y = parseYear(row[idx.year]);
+    const m = parseMonth(row[idx.month]);
+    const d = Number(row[idx.days]);
+    let o = Number(row[idx.occ]);
+    if (!type || !y || !m || !(d > 0)) { skipped++; continue; }
+    if (!isFinite(o) || o < 0) { o = 0; adjusted++; }
+    else if (o > d) { o = d; adjusted++; }
+    if (!marina && idx.marina >= 0) marina = cellStr(row[idx.marina]);
+
+    const key = y * 12 + (m - 1);
+    let mo = byKey.get(key);
+    if (!mo) { mo = { key, y, m, maxDays: 0, byType: {} }; byKey.set(key, mo); }
+    mo.maxDays = Math.max(mo.maxDays, d);
+    const b = mo.byType[type] || (mo.byType[type] = { o: 0, d: 0, n: 0 });
+    b.o += o; b.d += d; b.n++;
+
+    const id = cellStr(row[idx.berth]);
+    if (id) (berths[type] || (berths[type] = new Set())).add(id);
+    used++;
   }
-  
-  // Aggregate data by month and berth type
-  const monthlyData = {}; // Key: "YYYY-MM", Value: { totalOccupiedDays: 0, totalDaysInMonth: 0, berthTypes: { type: { occupied: 0, days: 0 } } }
-  const berthTypes = new Set();
-  const berthCounts = {}; // Key: berthType, Value: Set of unique berth IDs
-  
-  for (let i = 1; i < jsonData.length; i++) {
-    const row = jsonData[i];
-    if (!row || row.length === 0) continue;
-    
-    const berthId = row[berthCol];
-    const berthType = row[berthTypeCol];
-    const year = row[yearCol];
-    const month = row[monthCol];
-    const occupiedDays = parseFloat(row[occupiedDaysCol]) || 0;
-    const daysInMonth = parseFloat(row[daysInMonthCol]) || 0;
-    
-    if (!berthType || !year || !month) continue;
-    
-    const monthKey = `${year}-${String(month).padStart(2, '0')}`;
-    berthTypes.add(berthType);
-    
-    // Count unique berths for each type
-    if (!berthCounts[berthType]) {
-      berthCounts[berthType] = new Set();
+
+  // Build a continuous month sequence; months with no rows become gaps rather than 0%
+  const keys = [...byKey.keys()].sort((a, b) => a - b);
+  const months = [];
+  if (keys.length) {
+    for (let k = keys[0]; k <= keys[keys.length - 1]; k++) {
+      const mo = byKey.get(k) || { key: k, y: Math.floor(k / 12), m: (k % 12) + 1, maxDays: 0, byType: {}, missing: true };
+      mo.calDays = new Date(mo.y, mo.m, 0).getDate();
+      mo.partial = !mo.missing && mo.maxDays < mo.calDays; // e.g. export started/ended mid-month
+      mo.label = `${MONTHS[mo.m - 1]} ${mo.y}`;
+      mo.longLabel = `${MONTHS_FULL[mo.m - 1]} ${mo.y}`;
+      months.push(mo);
     }
-    if (berthId) {
-      berthCounts[berthType].add(berthId);
-    }
-    
-    if (!monthlyData[monthKey]) {
-      monthlyData[monthKey] = {
-        totalOccupiedDays: 0,
-        totalDaysInMonth: 0,
-        berthTypes: {}
-      };
-    }
-    
-    if (!monthlyData[monthKey].berthTypes[berthType]) {
-      monthlyData[monthKey].berthTypes[berthType] = {
-        occupiedDays: 0,
-        daysInMonth: 0
-      };
-    }
-    
-    monthlyData[monthKey].totalOccupiedDays += occupiedDays;
-    monthlyData[monthKey].totalDaysInMonth += daysInMonth;
-    monthlyData[monthKey].berthTypes[berthType].occupiedDays += occupiedDays;
-    monthlyData[monthKey].berthTypes[berthType].daysInMonth += daysInMonth;
   }
-  
-  console.log('Total rows processed:', jsonData.length - 1);
-  console.log('Unique months found:', Object.keys(monthlyData).length);
-  console.log('Berth types found:', Array.from(berthTypes));
-  
-  // Convert to sorted monthly data
-  const sortedMonths = Object.keys(monthlyData).sort();
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  
-  const data = {
-    labels: [],
-    overall: [],
-    berthTypes: {},
-    berthCounts: {}, // Store actual berth counts per type
-    total_berths: 0,
-    start_date: '',
-    end_date: '',
-    latest_date: '',
-    current_overall: undefined,
-    peak_overall: undefined,
-    peak_date: ''
+
+  const typeSet = new Set();
+  months.forEach((mo) => Object.keys(mo.byType).forEach((t) => typeSet.add(t)));
+  const berthCount = {};
+  typeSet.forEach((t) => {
+    berthCount[t] = berths[t] ? berths[t].size : Math.max(...months.map((mo) => (mo.byType[t] ? mo.byType[t].n : 0)));
+  });
+  const types = [...typeSet].sort((a, b) => berthCount[b] - berthCount[a] || a.localeCompare(b));
+
+  return { marina: marina || 'Marina', months, types, berthCount, used, skipped, adjusted };
+}
+
+// ---------- calculations (everything weighted by berth-days) ----------
+function computeView() {
+  const M = MODEL;
+  const T = M.types.filter((t) => selected.has(t));
+  const ms = M.months;
+
+  const occOf = (list, types = T) => {
+    let o = 0, d = 0;
+    for (const mo of list) for (const t of types) { const b = mo.byType[t]; if (b) { o += b.o; d += b.d; } }
+    return d > 0 ? (o / d) * 100 : null;
   };
-  
-  // Calculate total unique berths across all types
-  let totalUniqueBerths = 0;
-  berthTypes.forEach(type => {
-    const count = berthCounts[type] ? berthCounts[type].size : 0;
-    data.berthCounts[type] = count;
-    totalUniqueBerths += count;
+  const window12 = (end) => (end >= 11 ? ms.slice(end - 11, end + 1) : null);
+
+  const monthly = ms.map((mo) => occOf([mo]));
+  const valid = ms.map((_, i) => i).filter((i) => monthly[i] != null);
+  const full = valid.filter((i) => !ms[i].partial);
+  const pool = full.length ? full : valid;
+  if (!pool.length) return null;
+
+  // Headline month = latest complete month, so a part-month export doesn't distort the KPI
+  const head = pool[pool.length - 1];
+  const peak = pool.reduce((a, i) => (monthly[i] > monthly[a] ? i : a), pool[0]);
+  const low = pool.reduce((a, i) => (monthly[i] < monthly[a] ? i : a), pool[0]);
+  const rolling = ms.map((_, i) => (i >= 11 ? occOf(ms.slice(i - 11, i + 1)) : null));
+
+  const ttm = head >= 11 ? occOf(window12(head)) : null;
+  const prevTtm = head >= 23 ? occOf(window12(head - 12)) : null;
+  const yoyI = ms.findIndex((mo) => mo.key === ms[head].key - 12);
+  const yoy = yoyI >= 0 && monthly[yoyI] != null ? monthly[head] - monthly[yoyI] : null;
+
+  const years = [...new Set(ms.map((mo) => mo.y))];
+  const annual = years.map((y) => {
+    const list = ms.filter((mo) => mo.y === y && !mo.missing);
+    return { y, list, months: list.length, partial: list.length < 12 || list.some((mo) => mo.partial), occ: occOf(list) };
   });
-  data.total_berths = totalUniqueBerths;
-  
-  console.log('Berth counts per type:', data.berthCounts);
-  console.log('Total unique berths:', data.total_berths);
-  
-  // Initialize berth type arrays
-  berthTypes.forEach(type => {
-    data.berthTypes[type] = [];
+
+  const season = MONTHS.map((lab, i) => ({ lab, occ: occOf(ms.filter((mo) => mo.m === i + 1)) }));
+
+  // Long-run change: last 12 months vs first 12 months of data (needs 24+ months, no overlap)
+  const canLong = head >= 23;
+  const first12 = canLong ? ms.slice(0, 12) : null;
+  const last12 = canLong ? window12(head) : null;
+
+  const typeStats = T.map((t) => {
+    const hb = ms[head].byType[t];
+    const occ = hb && hb.d > 0 ? (hb.o / hb.d) * 100 : null;
+    const pb = yoyI >= 0 ? ms[yoyI].byType[t] : null;
+    const occPrev = pb && pb.d > 0 ? (pb.o / pb.d) * 100 : null;
+    const first = canLong ? occOf(first12, [t]) : null;
+    const last = canLong ? occOf(last12, [t]) : null;
+    const n = hb ? hb.n : 0;
+    return {
+      t, n, berths: M.berthCount[t], occ,
+      yoy: occ != null && occPrev != null ? occ - occPrev : null,
+      vacant: occ != null ? n * (1 - occ / 100) : null,
+      annual: annual.map((a) => occOf(a.list, [t])),
+      first, last, long: first != null && last != null ? last - first : null
+    };
   });
-  
-  sortedMonths.forEach(monthKey => {
-    const [year, month] = monthKey.split('-');
-    const monthName = monthNames[parseInt(month) - 1];
-    const label = `${monthName} ${year}`; // Always store full labels
-    
-    data.labels.push(label);
-    
-    const monthData = monthlyData[monthKey];
-    
-    // Calculate overall occupancy using berth-days weighting (most accurate for marina business)
-    const overallOccupancy = (monthData.totalOccupiedDays / monthData.totalDaysInMonth) * 100;
-    data.overall.push(overallOccupancy);
-    
-    // Calculate occupancy for each berth type
-    berthTypes.forEach(type => {
-      const typeData = monthData.berthTypes[type] || { occupiedDays: 0, daysInMonth: 0 };
-      const typeOccupancy = typeData.daysInMonth > 0 ? (typeData.occupiedDays / typeData.daysInMonth) * 100 : 0;
-      data.berthTypes[type].push(typeOccupancy);
-    });
-  });
-  
-  // Calculate statistics
-  if (data.overall.length > 0) {
-    data.current_overall = data.overall[data.overall.length - 1];
-    data.peak_overall = Math.max(...data.overall);
-    const peakIndex = data.overall.indexOf(data.peak_overall);
-    data.peak_date = data.labels[peakIndex] || '';
-    data.latest_date = data.labels[data.labels.length - 1] || '';
-    data.start_date = data.labels[0] || '';
-    data.end_date = data.labels[data.labels.length - 1] || '';
-  }
-  
-  console.log('Final parsed data:');
-  console.log('- Date range:', data.start_date, 'to', data.end_date);
-  console.log('- Current occupancy:', data.current_overall);
-  console.log('- Peak occupancy:', data.peak_overall);
-  console.log('- Latest berth type values:');
-  Object.entries(data.berthTypes).forEach(([type, values]) => {
-    console.log(`  ${type}: ${values[values.length - 1].toFixed(1)}%`);
-  });
-  
-  return data;
+
+  const totalN = typeStats.reduce((a, s) => a + s.n, 0);
+  const vacant = typeStats.reduce((a, s) => a + (s.vacant || 0), 0);
+  const overallFirst = canLong ? occOf(first12) : null;
+  const overallLast = canLong ? occOf(last12) : null;
+
+  return {
+    T, ms, monthly, rolling, head, peak, low, ttm, prevTtm, yoy, yoyI, annual, season,
+    typeStats, totalN, vacant, canLong, overallFirst, overallLast,
+    berthsTracked: T.reduce((a, t) => a + M.berthCount[t], 0)
+  };
 }
 
-function formatDate(dateValue) {
-  // Handle various date formats
-  if (typeof dateValue === 'number') {
-    // Excel serial date
-    const date = new Date((dateValue - 25569) * 86400 * 1000);
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
-  } else if (typeof dateValue === 'string') {
-    // Try to parse string date
-    const date = new Date(dateValue);
-    if (!isNaN(date)) {
-      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
-    }
-    return dateValue; // Return as-is if parsing fails
-  }
-  return String(dateValue);
+// ---------- filters ----------
+function buildFilters() {
+  const box = $('typeFilters');
+  box.innerHTML = `<label class="chip chip-all"><input type="checkbox" id="selectAll" checked> All</label>` +
+    MODEL.types.map((t) => `<label class="chip"><input type="checkbox" class="type-cb" value="${esc(t)}" checked> ${esc(t)} <span class="chip-n">${MODEL.berthCount[t].toLocaleString()}</span></label>`).join('');
+
+  const all = $('selectAll');
+  const boxes = [...document.querySelectorAll('.type-cb')];
+  const sync = () => {
+    selected = new Set(boxes.filter((cb) => cb.checked).map((cb) => cb.value));
+    all.checked = selected.size === boxes.length;
+    all.indeterminate = selected.size > 0 && selected.size < boxes.length;
+    renderReport();
+  };
+  all.addEventListener('change', () => { boxes.forEach((cb) => (cb.checked = all.checked)); sync(); });
+  boxes.forEach((cb) => cb.addEventListener('change', sync));
 }
 
-function calculateYearsCovered(startDate, endDate) {
-  if (!startDate || !endDate) return 'Berth occupancy';
-  
-  const startParts = startDate.split(' ');
-  const endParts = endDate.split(' ');
-  
-  if (startParts.length < 2 || endParts.length < 2) return 'Berth occupancy';
-  
-  const startYear = parseInt(startParts[1]);
-  const endYear = parseInt(endParts[1]);
-  
-  const yearsDiff = endYear - startYear;
-  
-  if (yearsDiff === 0) return 'Annual berth occupancy';
-  if (yearsDiff === 1) return 'Two years of berth occupancy';
-  if (yearsDiff === 2) return 'Three years of berth occupancy';
-  if (yearsDiff === 3) return 'Four years of berth occupancy';
-  if (yearsDiff === 4) return 'Five years of berth occupancy';
-  
-  return `${yearsDiff + 1} years of berth occupancy`;
-}
-
+// ---------- render ----------
 function renderReport() {
-  if (!DATA) return;
-  
-  console.log('=== RENDERING REPORT ===');
-  console.log('DATA available:', !!DATA);
-  console.log('DATA.overall length:', DATA.overall ? DATA.overall.length : 'N/A');
-  console.log('Selected berth types:', Array.from(selectedBerthTypes));
-  
-  // Get filtered data based on selection
-  const filteredData = getFilteredData();
-  
-  console.log('Filtered data:', {
-    overallLength: filteredData.overall.length,
-    berthTypesKeys: Object.keys(filteredData.berthTypes),
-    current_overall: filteredData.current_overall
-  });
-  
-  // Update hero section with safe value handling
-  document.getElementById('hero-period').textContent = (DATA.start_date || '—') + ' – ' + (DATA.end_date || '—');
-  document.getElementById('hero-num').innerHTML = (filteredData.current_overall !== undefined ? filteredData.current_overall.toFixed(1) : '—') + '<sup>%</sup>';
-  document.getElementById('hero-latest').textContent = DATA.latest_date || '—';
-  
-  // Update hero title dynamically based on date range
-  const yearsCovered = calculateYearsCovered(DATA.start_date, DATA.end_date);
-  document.getElementById('hero-title-text').textContent = `${yearsCovered} of berth occupancy, at a glance`;
-  
-  // Update marina name (can be customized based on data if needed)
-  document.getElementById('hero-marina-name').textContent = 'Westhaven Marina · Berth Occupancy';
-  
-  // Update berth count based on selection
-  if (selectedBerthTypes.size === Object.keys(DATA.berthTypes).length) {
-    document.getElementById('stat-berths').textContent = (DATA.total_berths || 0).toLocaleString();
-  } else {
-    // Sum berth counts for selected types
-    let totalSelectedBerths = 0;
-    selectedBerthTypes.forEach(type => {
-      totalSelectedBerths += DATA.berthCounts[type] || 0;
-    });
-    document.getElementById('stat-berths').textContent = totalSelectedBerths.toLocaleString();
-  }
-  
-  document.getElementById('stat-peak').textContent = (filteredData.peak_overall !== undefined ? filteredData.peak_overall.toFixed(1) : '—') + '%';
-  document.getElementById('stat-peak-label').textContent = 'peak, ' + (filteredData.peak_date || '—');
-  document.getElementById('stat-categories').textContent = selectedBerthTypes.size;
-  
-  // Update summary
-  updateSummary();
-  
-  // Clear and update charts
-  console.log('Clearing chart containers...');
-  document.getElementById('chartOverall').innerHTML = '';
-  document.getElementById('chartByType').innerHTML = '';
-  document.getElementById('chartSeason').innerHTML = '';
-  document.getElementById('typeLegend').innerHTML = '';
-  
-  console.log('Rendering charts...');
-  renderOverallChart();
+  if (!MODEL) return;
+  VIEW = selected.size ? computeView() : null;
+  const hasData = !!VIEW;
+  $('emptyState').hidden = hasData;
+  $('reportBody').style.display = hasData ? '' : 'none';
+  renderHero();
+  if (!hasData) return;
+  renderKpis();
+  renderSummary();
+  renderTypeTable();
+  renderSnapshot();
+  renderMethod();
+  renderCharts();
+}
+
+function renderCharts() {
+  renderTrend();
   renderByTypeChart();
   renderSeasonalChart();
-  
-  // Clear and update inventory table
-  document.getElementById('inv-body').innerHTML = '';
-  renderInventoryTable();
-  
-  console.log('=== REPORT RENDERING COMPLETE ===');
 }
 
-function updateSummary() {
-  console.log('Updating summary, total_berths:', DATA.total_berths);
-  
-  // Educational legend explaining the report
-  const summaryText = `
-    <strong>How to read this report:</strong> Occupancy is calculated as 
-    <strong>(Occupied Days ÷ Available Days) × 100</strong> for each berth, 
-    then aggregated using berth-days weighting for overall metrics.
-  `;
-  document.getElementById('summary-text').innerHTML = summaryText;
-  
-  // Educational callouts explaining each section
-  const calloutList = document.getElementById('callout-list');
-  calloutList.innerHTML = `
-    <li>
-      <span class="bar"></span>
-      <span><strong>Overall occupancy:</strong> Fleet-wide average calculated as total occupied days divided by total available days.</span>
-    </li>
-    <li>
-      <span class="bar"></span>
-      <span><strong>By berth type:</strong> Individual category performance showing each type's monthly occupancy trends.</span>
-    </li>
-    <li>
-      <span class="bar"></span>
-      <span><strong>Seasonal pattern:</strong> Average occupancy by calendar month across all years to identify seasonal trends.</span>
-    </li>
-    <li>
-      <span class="bar"></span>
-      <span><strong>Current snapshot:</strong> Latest month's occupancy by category with visual progress bars.</span>
-    </li>
-  `;
-}
+function renderHero() {
+  const M = MODEL, ms = M.months;
+  $('hero-marina-name').textContent = `${M.marina} · Berth occupancy report`;
+  $('hero-period').textContent = `${ms[0].label} – ${ms[ms.length - 1].label}`;
+  $('hero-title-text').textContent = `${spanWords(ms.length)} of berth occupancy, at a glance`;
+  $('footer').textContent = `${M.marina} · Berth occupancy report · Generated ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`;
 
-function populateBerthTypeDropdown() {
-  const container = document.getElementById('berthTypeCheckboxes');
-  container.innerHTML = '';
-  
-  // Add "Select All" checkbox
-  const selectAllDiv = document.createElement('div');
-  selectAllDiv.style.display = 'flex';
-  selectAllDiv.style.alignItems = 'center';
-  selectAllDiv.style.gap = '0.3rem';
-  selectAllDiv.style.marginRight = '0.5rem';
-  selectAllDiv.style.paddingRight = '0.5rem';
-  selectAllDiv.style.borderRight = '1px solid var(--line)';
-  
-  const selectAllCheckbox = document.createElement('input');
-  selectAllCheckbox.type = 'checkbox';
-  selectAllCheckbox.id = 'selectAllBerths';
-  selectAllCheckbox.checked = true;
-  selectAllCheckbox.style.cursor = 'pointer';
-  
-  const selectAllLabel = document.createElement('label');
-  selectAllLabel.htmlFor = 'selectAllBerths';
-  selectAllLabel.textContent = 'All';
-  selectAllLabel.style.fontSize = '0.8rem';
-  selectAllLabel.style.color = 'var(--muted)';
-  selectAllLabel.style.cursor = 'pointer';
-  
-  selectAllDiv.appendChild(selectAllCheckbox);
-  selectAllDiv.appendChild(selectAllLabel);
-  container.appendChild(selectAllDiv);
-  
-  // Add individual berth type checkboxes
-  Object.keys(DATA.berthTypes).forEach(type => {
-    const div = document.createElement('div');
-    div.style.display = 'flex';
-    div.style.alignItems = 'center';
-    div.style.gap = '0.3rem';
-    
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.value = type;
-    checkbox.checked = true;
-    checkbox.className = 'berth-type-checkbox';
-    checkbox.style.cursor = 'pointer';
-    
-    const label = document.createElement('label');
-    label.textContent = type;
-    label.style.fontSize = '0.8rem';
-    label.style.color = 'var(--muted)';
-    label.style.cursor = 'pointer';
-    
-    div.appendChild(checkbox);
-    div.appendChild(label);
-    container.appendChild(div);
-  });
-  
-  // Initialize selected types with all types
-  selectedBerthTypes = new Set(Object.keys(DATA.berthTypes));
-  
-  // Add event listeners
-  selectAllCheckbox.addEventListener('change', (e) => {
-    const isChecked = e.target.checked;
-    document.querySelectorAll('.berth-type-checkbox').forEach(cb => {
-      cb.checked = isChecked;
-    });
-    updateSelectedBerthTypes();
-    if (DATA) renderReport();
-  });
-  
-  document.querySelectorAll('.berth-type-checkbox').forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-      updateSelectedBerthTypes();
-      // Update select all checkbox state
-      const allChecked = Array.from(document.querySelectorAll('.berth-type-checkbox')).every(cb => cb.checked);
-      selectAllCheckbox.checked = allChecked;
-      if (DATA) renderReport();
-    });
-  });
-}
-
-function updateSelectedBerthTypes() {
-  selectedBerthTypes.clear();
-  document.querySelectorAll('.berth-type-checkbox:checked').forEach(checkbox => {
-    selectedBerthTypes.add(checkbox.value);
-  });
-}
-
-function getFilteredLabels() {
-  if (!showYearsOnly) {
-    return DATA.labels;
-  }
-  
-  // Extract just the year from each label
-  return DATA.labels.map(label => {
-    const parts = label.split(' ');
-    return parts[parts.length - 1]; // Get the year part
-  });
-}
-
-function getFilteredData() {
-  if (!DATA) {
-    console.log('No DATA available in getFilteredData');
-    return {
-      labels: [],
-      overall: [],
-      berthTypes: {},
-      current_overall: 0,
-      peak_overall: 0,
-      peak_date: ''
-    };
-  }
-  
-  console.log('getFilteredData called, selected types:', Array.from(selectedBerthTypes));
-  
-  if (selectedBerthTypes.size === 0) {
-    // If no types selected, default to all types
-    console.log('No types selected, defaulting to all');
-    selectedBerthTypes = new Set(Object.keys(DATA.berthTypes));
-  }
-  
-  if (selectedBerthTypes.size === Object.keys(DATA.berthTypes).length) {
-    // All types selected - return full data
-    console.log('All types selected, returning full data');
-    return {
-      labels: DATA.labels,
-      overall: DATA.overall,
-      berthTypes: DATA.berthTypes,
-      current_overall: DATA.current_overall,
-      peak_overall: DATA.peak_overall,
-      peak_date: DATA.peak_date
-    };
-  }
-  
-  // Calculate aggregated data for selected types only
-  const selectedTypesArray = Array.from(selectedBerthTypes);
-  console.log('Calculating aggregated data for types:', selectedTypesArray);
-  
-  const filteredBerthTypes = {};
-  selectedTypesArray.forEach(type => {
-    filteredBerthTypes[type] = DATA.berthTypes[type];
-  });
-  
-  // Calculate aggregated overall occupancy for selected types
-  // Use berth-days weighting approximation using berth type averages weighted by berth count
-  const aggregatedOverall = DATA.labels.map((_, index) => {
-    let weightedOccupancySum = 0;
-    let totalBerthCount = 0;
-    
-    selectedTypesArray.forEach(type => {
-      const values = DATA.berthTypes[type];
-      if (values && values[index] !== undefined) {
-        const berthCount = DATA.berthCounts[type] || 1;
-        const typeOccupancy = values[index];
-        
-        // Weight by berth count to approximate berth-days weighting
-        weightedOccupancySum += typeOccupancy * berthCount;
-        totalBerthCount += berthCount;
-      }
-    });
-    
-    return totalBerthCount > 0 ? weightedOccupancySum / totalBerthCount : 0;
-  });
-  
-  console.log('Aggregated overall sample:', aggregatedOverall.slice(0, 3));
-  
-  return {
-    labels: DATA.labels,
-    overall: aggregatedOverall,
-    berthTypes: filteredBerthTypes,
-    current_overall: aggregatedOverall[aggregatedOverall.length - 1] || 0,
-    peak_overall: Math.max(...aggregatedOverall),
-    peak_date: DATA.peak_date
-  };
-}
-
-function renderOverallChart() {
-  if (!DATA || !DATA.overall || DATA.overall.length === 0) {
-    console.log('No overall data to render chart');
+  if (!VIEW) {
+    ['hero-num', 'stat-berths', 'stat-peak', 'stat-categories'].forEach((id) => ($(id).textContent = '—'));
+    $('hero-cap').textContent = '';
+    $('hero-delta').textContent = '';
     return;
   }
-  
-  const filteredData = getFilteredData();
-  const filteredLabels = getFilteredLabels();
-  
-  console.log('Rendering overall chart with', filteredData.overall.length, 'data points');
-  console.log('Sample data:', filteredLabels.slice(0, 3), filteredData.overall.slice(0, 3));
-  
-  if (filteredData.overall.length === 0) {
-    console.log('Filtered overall data is empty, skipping chart render');
+  const V = VIEW, hm = ms[V.head];
+  $('hero-num').innerHTML = `${V.monthly[V.head].toFixed(1)}<sup>%</sup>`;
+  $('hero-cap').textContent = `Occupancy in ${hm.longLabel}${V.head === ms.length - 1 ? '' : ' (latest complete month)'}`;
+
+  const parts = [];
+  if (V.yoy != null) parts.push(`<span class="${dirCls(V.yoy)}">${arrow(V.yoy)} ${pts(V.yoy)}</span> vs ${ms[V.yoyI].label}`);
+  parts.push(V.head === V.peak ? 'At the period high' : `${(V.monthly[V.peak] - V.monthly[V.head]).toFixed(1)} pts below the ${ms[V.peak].label} peak`);
+  $('hero-delta').innerHTML = parts.join(' · ');
+
+  $('stat-berths').textContent = V.berthsTracked.toLocaleString();
+  $('stat-peak').textContent = pct(V.monthly[V.peak]);
+  $('stat-peak-label').textContent = `peak, ${ms[V.peak].label}`;
+  $('stat-categories').textContent = V.T.length;
+}
+
+function renderKpis() {
+  const V = VIEW, ms = V.ms, hm = ms[V.head];
+  const ttmD = V.ttm != null && V.prevTtm != null ? V.ttm - V.prevTtm : null;
+  const cards = [
+    {
+      label: 'Last 12 months', cls: dirCls(ttmD),
+      value: pct(V.ttm),
+      sub: V.ttm == null ? 'Needs 12 months of data'
+        : ttmD != null ? `${deltaTag(ttmD)} vs previous 12 months` : `12 months to ${hm.label}`
+    },
+    {
+      label: 'Year on year', cls: dirCls(V.yoy),
+      value: V.yoy == null ? '—' : pts(V.yoy),
+      sub: V.yoy == null ? 'No month a year earlier' : `${hm.label} (${pct(V.monthly[V.head])}) vs ${ms[V.yoyI].label} (${pct(V.monthly[V.yoyI])})`
+    },
+    {
+      label: 'Empty berths', cls: '',
+      value: fmtInt(V.vacant),
+      sub: `on an average day in ${hm.label} — ${pct((V.vacant / V.totalN) * 100)} of ${V.totalN.toLocaleString()} berths`
+    },
+    {
+      label: 'Period low', cls: '',
+      value: pct(V.monthly[V.low]),
+      sub: `${ms[V.low].label} · range ${pct(V.monthly[V.low])} – ${pct(V.monthly[V.peak])}`
+    }
+  ];
+  $('kpiGrid').innerHTML = cards.map((c) => `
+    <div class="kpi ${c.cls === 'flat' ? '' : c.cls}">
+      <div class="k-label">${c.label}</div>
+      <div class="k-value">${c.value}</div>
+      <div class="k-sub">${c.sub}</div>
+    </div>`).join('');
+}
+
+function renderSummary() {
+  const V = VIEW, ms = V.ms, hm = ms[V.head];
+  const multi = V.T.length > 1;
+  const scope = multi ? `${V.berthsTracked.toLocaleString()} berths in ${V.T.length} categories` : `${V.berthsTracked.toLocaleString()} ${esc(V.T[0])} berths`;
+
+  $('summary-text').innerHTML =
+    `Across ${scope}, occupancy was <strong>${pct(V.monthly[V.head])}</strong> in ${hm.longLabel}. ` +
+    `It peaked at <strong>${pct(V.monthly[V.peak])}</strong> in ${ms[V.peak].longLabel}` +
+    (V.ttm != null ? ` and averaged <strong>${pct(V.ttm)}</strong> over the last 12 months.` : '.');
+
+  const F = [];
+  if (V.ttm != null && V.prevTtm != null) {
+    const d = V.ttm - V.prevTtm;
+    const word = d <= -0.5 ? 'trending down' : d >= 0.5 ? 'trending up' : 'broadly stable';
+    F.push({ cls: d <= -0.5 ? 'down' : d >= 0.5 ? 'up' : '', html: `<b>Occupancy is ${word}.</b> The last 12 months averaged ${pct(V.ttm)}, ${changePhrase(d, 'the previous 12 months')} (${pct(V.prevTtm)}).` });
+  }
+
+  const stats = [...V.typeStats].sort((a, b) => b.n - a.n);
+  if (multi && stats[0] && stats[0].occ != null) {
+    const s = stats[0];
+    const share = Math.round((s.n / V.totalN) * 100);
+    F.push({
+      cls: dirCls(s.yoy) === 'flat' ? '' : dirCls(s.yoy),
+      html: `<b>${esc(s.t)} (${s.n.toLocaleString()} berths, ${share}% of inventory) drives the overall result.</b> It ran at ${pct(s.occ)} in ${hm.label}` +
+        (s.yoy != null ? `, ${changePhrase(s.yoy, 'a year earlier')}.` : '.')
+    });
+  }
+
+  if (multi && V.canLong) {
+    const movers = V.typeStats.filter((s) => s.berths >= MIN_TYPE_FOR_TREND && s.long != null);
+    const worst = movers.reduce((a, s) => (!a || s.long < a.long ? s : a), null);
+    const best = movers.reduce((a, s) => (!a || s.long > a.long ? s : a), null);
+    if (worst && worst.long < -1) {
+      F.push({ cls: 'down', html: `<b>${esc(worst.t)} has declined the most.</b> Occupancy fell from ${pct(worst.first)} in the first 12 months of data to ${pct(worst.last)} in the last 12 (${pts(worst.long)}).` });
+    }
+    if (best && best !== worst && best.long > 1) {
+      F.push({ cls: 'up', html: `<b>${esc(best.t)} has improved the most.</b> Occupancy rose from ${pct(best.first)} in the first 12 months of data to ${pct(best.last)} in the last 12 (${pts(best.long)}).` });
+    }
+  }
+
+  if (V.vacant >= 0.5) {
+    const top = [...V.typeStats].filter((s) => s.vacant != null).sort((a, b) => b.vacant - a.vacant);
+    let html = `<b>About ${fmtInt(V.vacant)} berths sit empty on an average day</b> (${hm.label}, ${pct((V.vacant / V.totalN) * 100)} of inventory).`;
+    if (multi && top[0] && top[0].vacant >= 0.5) {
+      html += ` ${esc(top[0].t)} accounts for ${fmtInt(top[0].vacant)} of them (${Math.round((top[0].vacant / V.vacant) * 100)}%)`;
+      html += top[1] && top[1].vacant >= 0.5 ? `, followed by ${esc(top[1].t)} with ${fmtInt(top[1].vacant)}.` : '.';
+      html += ' This is where the revenue opportunity sits.';
+    }
+    F.push({ cls: '', html });
+  }
+
+  const seas = V.season.map((s, i) => ({ ...s, i })).filter((s) => s.occ != null);
+  if (seas.length === 12) {
+    const hi = seas.reduce((a, s) => (s.occ > a.occ ? s : a));
+    const lo = seas.reduce((a, s) => (s.occ < a.occ ? s : a));
+    const spread = hi.occ - lo.occ;
+    const word = spread < 2 ? 'modest' : spread < 5 ? 'noticeable' : 'strong';
+    F.push({ cls: '', html: `<b>Seasonality is ${word}.</b> ${MONTHS_FULL[hi.i]} is typically the strongest month (${pct(hi.occ)}) and ${MONTHS_FULL[lo.i]} the weakest (${pct(lo.occ)}), a swing of ${spread.toFixed(1)} pts.` });
+  }
+
+  $('callout-list').innerHTML = F.map((f) => `<li class="${f.cls}"><span class="bar"></span><span>${f.html}</span></li>`).join('');
+}
+
+function renderTrend() {
+  const V = VIEW, ms = V.ms;
+  const hollow = new Set();
+  if (trendMode === 'annual') {
+    const A = V.annual.filter((a) => a.occ != null);
+    A.forEach((a, i) => { if (a.partial) hollow.add(i); });
+    const values = A.map((a) => a.occ);
+    const b = niceBounds(values, 0.4);
+    $('trend-chart-title').textContent = `Annual occupancy, ${A[0].y} – ${A[A.length - 1].y}`;
+    renderLineChart('chartOverall', {
+      labels: A.map((a) => (a.partial ? `${a.y}*` : String(a.y))),
+      tips: A.map((a) => (a.partial ? `${a.y} · partial year (${a.months} months)` : String(a.y))),
+      series: [{ name: 'Annual occupancy', data: values, color: 'var(--teal)', area: true }],
+      yMin: b.lo, yMax: b.hi, markers: true, hollow,
+      annotations: A.map((a, i) => ({ i, v: a.occ, text: pct(a.occ), color: 'var(--ink)', noDot: true }))
+    });
+    $('trendLegend').innerHTML = `<span class="legend-chip"><i style="background:var(--teal)"></i>Annual occupancy</span>` +
+      (hollow.size ? `<span class="legend-chip"><i class="ring"></i>Partial year</span>` : '');
+    const partials = A.filter((a) => a.partial).map((a) => `${a.y} (${a.months} month${a.months === 1 ? '' : 's'})`);
+    $('trend-chart-foot').textContent = partials.length
+      ? `* Partial year: ${partials.join(', ')}. Annual figures are weighted by berth-days.`
+      : 'Annual figures are weighted by berth-days.';
     return;
   }
-  
-  document.getElementById('trend-chart-title').textContent = `${DATA.start_date} – ${DATA.end_date}`;
-  document.getElementById('trend-chart-foot').textContent = 
-    `Peak of ${filteredData.peak_overall.toFixed(1)}% in ${filteredData.peak_date}. Current: ${filteredData.current_overall.toFixed(1)}% in ${DATA.latest_date}.`;
-  
+
+  ms.forEach((mo, i) => { if (mo.partial) hollow.add(i); });
+  const hasRolling = V.rolling.some((v) => v != null);
+  const b = niceBounds([...V.monthly, ...V.rolling].filter((v) => v != null), 0.25);
+  const hm = ms[V.head];
+  const annotations = [{ i: V.peak, v: V.monthly[V.peak], text: `Peak ${pct(V.monthly[V.peak])}`, color: 'var(--good)' }];
+  // Skip the low label when it sits right next to the headline point, to avoid overlapping labels
+  if (Math.abs(V.low - V.head) > 3 && V.low !== V.peak) annotations.push({ i: V.low, v: V.monthly[V.low], text: `Low ${pct(V.monthly[V.low])}`, color: 'var(--bad)', below: true });
+  if (V.head !== V.peak) annotations.push({ i: V.head, v: V.monthly[V.head], text: `${hm.label}: ${pct(V.monthly[V.head])}`, color: 'var(--teal)', below: V.head === V.low });
+
+  $('trend-chart-title').textContent = `${ms[0].label} – ${ms[ms.length - 1].label}`;
   renderLineChart('chartOverall', {
-    labels: filteredLabels,
-    series: [{
-      data: filteredData.overall,
-      color: 'var(--teal)',
-      area: true
-    }],
-    yMin: Math.min(...filteredData.overall) - 5,
-    yMax: Math.max(...filteredData.overall) + 5,
-    xEvery: Math.ceil(filteredLabels.length / 12)
+    labels: ms.map((mo) => mo.label),
+    tips: ms.map((mo) => (mo.partial ? `${mo.label} · partial (${mo.maxDays} of ${mo.calDays} days)` : mo.label)),
+    series: [
+      { name: 'Monthly occupancy', data: V.monthly, color: 'var(--teal)', area: true },
+      ...(hasRolling ? [{ name: '12-month average', data: V.rolling, color: 'var(--ink)', dashed: true, width: 1.6, opacity: 0.55 }] : [])
+    ],
+    yMin: b.lo, yMax: b.hi, hollow, annotations
   });
+  $('trendLegend').innerHTML =
+    `<span class="legend-chip"><i style="background:var(--teal)"></i>Monthly occupancy</span>` +
+    (hasRolling ? `<span class="legend-chip"><i class="dash"></i>12-month rolling average</span>` : '') +
+    (hollow.size ? `<span class="legend-chip"><i class="ring"></i>Partial month</span>` : '');
+  $('trend-chart-foot').textContent =
+    `Peak of ${pct(V.monthly[V.peak])} in ${ms[V.peak].label}; latest complete month ${hm.label} at ${pct(V.monthly[V.head])}.` +
+    (hollow.size ? ' Partial months are shown hollow and excluded from peak, low and headline figures.' : '') +
+    ` Vertical axis starts at ${b.lo}%.`;
 }
 
 function renderByTypeChart() {
-  if (!DATA || !DATA.berthTypes) return;
-  
-  const filteredData = getFilteredData();
-  const filteredLabels = getFilteredLabels();
-  
-  const berthTypes = Object.entries(filteredData.berthTypes);
-  if (berthTypes.length === 0) return;
-  
-  // Generate annual averages for each type
-  const years = [...new Set(DATA.labels.map(l => l.split(' ')[1]))];
-  const colors = ['var(--teal)', 'var(--seafoam)', 'var(--brass)', 'var(--rust)', 'var(--navy-2)'];
-  
-  const series = berthTypes.slice(0, 5).map(([name, values], index) => ({
-    label: name,
-    data: values, // Using monthly data for now
-    color: colors[index % colors.length],
-    seriesName: name // Store series name for tooltip
-  }));
-  
+  const V = VIEW;
+  const top = V.typeStats.slice(0, 5); // typeStats is ordered by berth count, largest first
+  const labels = V.annual.map((a) => (a.partial ? `${a.y}*` : String(a.y)));
+  const tips = V.annual.map((a) => (a.partial ? `${a.y} (${a.months} months)` : String(a.y)));
+  const hollow = new Set(V.annual.map((a, i) => (a.partial ? i : -1)).filter((i) => i >= 0));
   renderLineChart('chartByType', {
-    labels: filteredLabels,
-    series: series,
-    yMin: 0,
-    yMax: 100,
-    xEvery: Math.ceil(filteredLabels.length / 12)
+    labels, tips, hollow, markers: true, yMin: 0, yMax: 100,
+    series: top.map((s, i) => ({ name: s.t, data: s.annual, color: TYPE_COLORS[i] }))
   });
-  
-  // Render legend
-  const legendContainer = document.getElementById('typeLegend');
-  legendContainer.innerHTML = '';
-  series.forEach(s => {
-    const chip = document.createElement('div');
-    chip.className = 'legend-chip';
-    chip.innerHTML = `<i style="background:${s.color}"></i>${s.label}`;
-    legendContainer.appendChild(chip);
-  });
+  $('typeLegend').innerHTML = top.map((s, i) =>
+    `<span class="legend-chip"><i style="background:${TYPE_COLORS[i]}"></i>${esc(s.t)} · ${s.berths.toLocaleString()} berths</span>`).join('');
+  $('bytype-note').textContent = V.typeStats.length > 5 ? `top 5 of ${V.typeStats.length} by berth count` : 'by berth count';
+}
+
+function heatCell(v) {
+  if (v == null) return '<td class="hm na">—</td>';
+  const mix = Math.round(Math.max(0, Math.min(100, v)) * 0.9);
+  const ink = v >= 75 ? 'var(--heat-ink)' : 'var(--ink)';
+  return `<td class="hm" style="background:color-mix(in srgb, var(--heat) ${mix}%, var(--paper-raised));color:${ink}">${v.toFixed(1)}</td>`;
+}
+
+function renderTypeTable() {
+  const V = VIEW;
+  const head = `<thead><tr><th>Berth type</th><th class="num">Berths</th>` +
+    V.annual.map((a) => `<th title="${a.partial ? `${a.months} months of data` : 'Full year'}">${a.y}${a.partial ? '*' : ''}</th>`).join('') +
+    (V.canLong ? '<th>Change†</th>' : '') + '</tr></thead>';
+  const row = (name, berths, annual, long, cls = '') =>
+    `<tr class="${cls}"><td class="name">${name}</td><td class="num">${berths}</td>${annual.map(heatCell).join('')}` +
+    (V.canLong ? `<td class="num">${deltaTag(long)}</td>` : '') + '</tr>';
+
+  const body = V.typeStats.map((s) =>
+    row(esc(s.t) + (s.berths < SMALL_TYPE ? '<span class="badge">small sample</span>' : ''), s.berths.toLocaleString(), s.annual, s.long)).join('');
+  const total = V.typeStats.length > 1
+    ? row('All selected', V.berthsTracked.toLocaleString(), V.annual.map((a) => a.occ),
+      V.canLong ? V.overallLast - V.overallFirst : null, 'total')
+    : '';
+  $('heatTable').innerHTML = head + `<tbody>${body}${total}</tbody>`;
+
+  const partials = V.annual.filter((a) => a.partial).map((a) => `${a.y} (${a.months} months)`);
+  const notes = [];
+  if (partials.length) notes.push(`* Partial year: ${partials.join(', ')}.`);
+  if (V.canLong) notes.push('† Last 12 months vs first 12 months of data, in percentage points.');
+  if (V.typeStats.some((s) => s.berths < SMALL_TYPE)) notes.push(`Categories with fewer than ${SMALL_TYPE} berths move in large steps; treat as directional.`);
+  $('heat-foot').textContent = notes.join(' ');
 }
 
 function renderSeasonalChart() {
-  if (!DATA || !DATA.overall || DATA.overall.length === 0) return;
-  
-  const filteredData = getFilteredData();
-  
-  // Calculate monthly averages across all years
-  const monthlyData = {};
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  
-  DATA.labels.forEach((label, index) => {
-    const month = label.split(' ')[0];
-    if (!monthlyData[month]) {
-      monthlyData[month] = [];
-    }
-    monthlyData[month].push(filteredData.overall[index]);
-  });
-  
-  const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const labels = [];
-  const values = [];
-  
-  monthOrder.forEach(month => {
-    if (monthlyData[month] && monthlyData[month].length > 0) {
-      labels.push(month);
-      const avg = monthlyData[month].reduce((a, b) => a + b, 0) / monthlyData[month].length;
-      values.push(avg);
-    }
-  });
-  
+  const V = VIEW;
+  const seas = V.season;
+  const vals = seas.map((s) => s.occ).filter((v) => v != null);
+  if (!vals.length) return;
+  const b = niceBounds(vals, 0.6);
+  const hiI = seas.findIndex((s) => s.occ === Math.max(...vals));
+  const loI = seas.findIndex((s) => s.occ === Math.min(...vals));
   renderBarChart('chartSeason', {
-    labels: labels,
-    values: values,
-    yMin: Math.min(...values) - 2,
-    yMax: Math.max(...values) + 2,
-    color: 'var(--teal)'
+    labels: seas.map((s) => s.lab),
+    values: seas.map((s) => s.occ),
+    tips: seas.map((s, i) => MONTHS_FULL[i]),
+    yMin: b.lo, yMax: b.hi,
+    colors: seas.map((_, i) => (i === hiI ? 'var(--good)' : i === loI ? 'var(--bad)' : 'var(--teal)')),
+    strong: new Set([hiI, loI])
   });
+  $('season-foot').innerHTML =
+    `<span style="color:var(--good);font-weight:600">Strongest: ${MONTHS_FULL[hiI]} ${pct(seas[hiI].occ)}</span> · ` +
+    `<span style="color:var(--bad);font-weight:600">Weakest: ${MONTHS_FULL[loI]} ${pct(seas[loI].occ)}</span> · ` +
+    `Vertical axis starts at ${b.lo}% to make month-to-month differences visible.`;
 }
 
-function renderInventoryTable() {
-  if (!DATA || !DATA.berthTypes) {
-    console.log('No berth types data for inventory table');
-    return;
+function renderSnapshot() {
+  const V = VIEW, ms = V.ms, hm = ms[V.head];
+  $('inv-sub').textContent = `Berth count and occupancy by category for ${hm.longLabel}, the latest complete month. ` +
+    `"Empty berths" is the average number of berths unoccupied on any given day.`;
+  $('inv-yoy-head').textContent = V.yoyI >= 0 ? `vs ${ms[V.yoyI].label}` : 'vs last year';
+
+  const rows = [...V.typeStats].sort((a, b) => b.n - a.n).map((s) => {
+    const v = s.occ == null ? 0 : s.occ;
+    const barClass = v < 50 ? 'low' : v < 75 ? 'mid' : '';
+    return `<tr>
+      <td>${esc(s.t)}${s.berths < SMALL_TYPE ? '<span class="badge">small sample</span>' : ''}</td>
+      <td class="num">${s.n.toLocaleString()}</td>
+      <td><div class="occ-bar ${barClass}"><span style="width:${v}%"></span></div></td>
+      <td class="num">${pct(s.occ)}</td>
+      <td class="num">${deltaTag(s.yoy)}</td>
+      <td class="num">${s.vacant == null ? '—' : fmtInt(s.vacant)}</td>
+    </tr>`;
+  });
+  if (V.typeStats.length > 1) {
+    rows.push(`<tr class="total">
+      <td>All selected</td>
+      <td class="num">${V.totalN.toLocaleString()}</td>
+      <td><div class="occ-bar"><span style="width:${V.monthly[V.head]}%"></span></div></td>
+      <td class="num">${pct(V.monthly[V.head])}</td>
+      <td class="num">${deltaTag(V.yoy)}</td>
+      <td class="num">${fmtInt(V.vacant)}</td>
+    </tr>`);
   }
-  
-  const filteredData = getFilteredData();
-  
-  console.log('Rendering inventory table with berth types:', Object.keys(filteredData.berthTypes));
-  console.log('Berth counts:', DATA.berthCounts);
-  
-  const tbody = document.getElementById('inv-body');
-  tbody.innerHTML = '';
-  
-  const subtitle = selectedBerthTypes.size === Object.keys(DATA.berthTypes).length
-    ? `Berth count and occupancy by category, ${DATA.latest_date}.`
-    : selectedBerthTypes.size === 1
-    ? `Berth count and occupancy for ${Array.from(selectedBerthTypes)[0]}, ${DATA.latest_date}.`
-    : `Berth count and occupancy for ${selectedBerthTypes.size} selected types, ${DATA.latest_date}.`;
-  
-  document.getElementById('inv-sub').textContent = subtitle;
-  
-  Object.entries(filteredData.berthTypes).forEach(([name, values]) => {
-    const latestValue = values[values.length - 1] || 0;
-    // Use actual berth count from data
-    const berthCount = DATA.berthCounts[name] || 0;
-    
-    console.log(`Rendering row for ${name}: ${berthCount} berths, ${latestValue.toFixed(1)}% occupancy`);
-    
-    const row = document.createElement('tr');
-    const barClass = latestValue < 50 ? 'low' : latestValue < 75 ? 'mid' : '';
-    
-    row.innerHTML = `
-      <td>${name}</td>
-      <td class="num">${berthCount}</td>
-      <td>
-        <div class="occ-bar-wrap">
-          <div class="occ-bar ${barClass}">
-            <span style="width:${latestValue}%"></span>
-          </div>
-        </div>
-      </td>
-      <td class="num">${latestValue.toFixed(1)}%</td>
-    `;
-    tbody.appendChild(row);
-  });
+  $('inv-body').innerHTML = rows.join('');
 }
 
-// ---- lightweight, dependency-free SVG chart renderer ----
-const SVGNS = 'http://www.w3.org/2000/svg';
-const NUMFMT = (v) => (Math.round(v * 10) / 10).toString();
+function renderMethod() {
+  const M = MODEL, V = VIEW, ms = M.months;
+  const partial = ms.filter((mo) => mo.partial).map((mo) => `${mo.label} (${mo.maxDays} of ${mo.calDays} days)`);
+  const missing = ms.filter((mo) => mo.missing).map((mo) => mo.label);
+  const small = M.types.filter((t) => M.berthCount[t] < SMALL_TYPE).map((t) => `${esc(t)} (${M.berthCount[t]})`);
+  const items = [
+    `<b>Occupancy</b> = occupied berth-days ÷ available berth-days × 100. Every figure — monthly, annual, seasonal, per category and filtered totals — is calculated from the underlying berth-days, so larger categories carry proportionally more weight.`,
+    `<b>Headline figures</b> use ${ms[V.head].longLabel}, the latest complete month. Peak and low are taken from complete months only.`,
+    partial.length ? `<b>Partial months:</b> ${partial.join(', ')}. They are shown hollow on the charts and contribute to annual and seasonal averages in proportion to their days.` : null,
+    missing.length ? `<b>Months with no data:</b> ${missing.join(', ')} — shown as gaps.` : null,
+    `<b>Empty berths</b> = berths × (1 − occupancy) for the month, i.e. the average number of berths unoccupied on a given day.`,
+    small.length ? `<b>Small categories:</b> ${small.join(', ')} berths. Figures for these move in large steps and should be read as directional.` : null,
+    `<b>Source:</b> ${esc(M.fileName)} (sheet “${esc(M.sheet)}”) — ${M.used.toLocaleString()} rows used` +
+      (M.skipped ? `, ${M.skipped.toLocaleString()} skipped (missing type, year, month or days)` : '') +
+      (M.adjusted ? `, ${M.adjusted.toLocaleString()} with occupied days capped to the valid range` : '') + '.'
+  ].filter(Boolean);
+  $('methodList').innerHTML = items.map((i) => `<li>${i}</li>`).join('');
+}
 
-function niceBounds(values, padFrac){
+// ---------- lightweight, dependency-free SVG charts ----------
+function niceBounds(values, padFrac) {
   const min = Math.min(...values), max = Math.max(...values);
   const pad = Math.max((max - min) * padFrac, 1);
   return { lo: Math.max(0, Math.floor((min - pad) / 5) * 5), hi: Math.min(100, Math.ceil((max + pad) / 5) * 5) };
 }
 
-function renderLineChart(containerId, { labels, series, yMin, yMax, xEvery, markers }) {
-  const W = 900, H = 280, padL = 40, padR = 14, padT = 14, padB = 28;
+function niceTicks(lo, hi) {
+  const raw = (hi - lo) / 4;
+  const step = [0.5, 1, 2, 2.5, 5, 10, 20, 25, 50].find((s) => s >= raw) || 50;
+  const ticks = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) ticks.push(+v.toFixed(2));
+  return ticks;
+}
+
+function chartBox(id) {
+  const el = $(id);
+  return { el, W: Math.max(300, Math.round(el.clientWidth || 900)), H: Math.round(el.clientHeight || 280) };
+}
+
+function renderLineChart(containerId, { labels, tips, series, yMin, yMax, hollow = new Set(), annotations = [], markers = false }) {
+  const { el, W, H } = chartBox(containerId);
+  const padL = 44, padR = 18, padT = 24, padB = 30;
   const innerW = W - padL - padR, innerH = H - padT - padB;
   const n = labels.length;
-  const xAt = (i) => padL + (n === 1 ? 0 : innerW * (i / (n - 1)));
+  const xAt = (i) => padL + (n === 1 ? innerW / 2 : innerW * (i / (n - 1)));
   const yAt = (v) => padT + innerH * (1 - (v - yMin) / (yMax - yMin));
+  tips = tips || labels;
 
-  const tickCount = 5;
-  const ticks = Array.from({ length: tickCount }, (_, i) => yMin + (yMax - yMin) * (i / (tickCount - 1)));
-
-  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="${SVGNS}">`;
-
-  // gridlines + y labels
-  ticks.forEach((t) => {
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  niceTicks(yMin, yMax).forEach((t) => {
     const y = yAt(t);
-    svg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" style="stroke:var(--line)" stroke-width="1"/>`;
-    svg += `<text x="${padL - 8}" y="${y + 3}" text-anchor="end" font-size="10" style="fill:var(--muted)">${NUMFMT(t)}%</text>`;
+    svg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" class="grid"/>`;
+    svg += `<text x="${padL - 8}" y="${y + 4}" text-anchor="end" class="axis">${t}%</text>`;
   });
 
-  // x labels
+  // x labels: evenly thinned to fit, always including the last point
+  const every = Math.max(1, Math.ceil(n / Math.max(2, Math.floor(innerW / 72))));
   labels.forEach((lab, i) => {
-    if (i % xEvery !== 0 && i !== n - 1) return;
-    svg += `<text x="${xAt(i)}" y="${H - padB + 16}" text-anchor="middle" font-size="10" style="fill:var(--muted)">${lab}</text>`;
+    if ((n - 1 - i) % every !== 0) return;
+    svg += `<text x="${xAt(i)}" y="${H - padB + 19}" text-anchor="middle" class="axis">${esc(lab)}</text>`;
   });
 
-  // series
   series.forEach((s) => {
-    const pts = s.data.map((v, i) => [xAt(i), yAt(v)]);
-    const pathD = 'M ' + pts.map((p) => p.join(',')).join(' L ');
-    if (s.area) {
+    let d = '', pen = false;
+    s.data.forEach((v, i) => {
+      if (v == null) { pen = false; return; }
+      d += `${pen ? 'L' : 'M'}${xAt(i).toFixed(1)},${yAt(v).toFixed(1)} `;
+      pen = true;
+    });
+    if (!d) return;
+    if (s.area && s.data.every((v) => v != null)) {
       const base = padT + innerH;
-      const areaD = `M ${pts[0][0]},${base} L ` + pts.map((p) => p.join(',')).join(' L ') + ` L ${pts[pts.length - 1][0]},${base} Z`;
-      svg += `<path d="${areaD}" style="fill:${s.color}" opacity="0.13" stroke="none"/>`;
+      svg += `<path d="M${xAt(0)},${base} ${d.replace(/^M/, 'L')}L${xAt(n - 1)},${base} Z" style="fill:${s.color}" opacity="0.12" stroke="none"/>`;
     }
-    svg += `<path d="${pathD}" style="stroke:${s.color}" stroke-width="2.25" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
-    
-    // Add interactive points for hover
-    pts.forEach(([x, y], i) => {
-      const value = s.data[i];
-      const label = labels[i];
-      // Invisible larger circle for easier hover detection
-      svg += `<circle cx="${x}" cy="${y}" r="10" fill="transparent" class="chart-point" 
-              data-label="${label}" data-value="${NUMFMT(value)}" data-series="${s.seriesName || ''}"/>`;
-      // Visible small circle
-      svg += `<circle cx="${x}" cy="${y}" r="3" style="fill:${s.color}" pointer-events="none"/>`;
+    svg += `<path d="${d}" style="stroke:${s.color}" stroke-width="${s.width || 2.25}" opacity="${s.opacity || 1}" ${s.dashed ? 'stroke-dasharray="5 4"' : ''} fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
+    if (s.dashed) return;
+    s.data.forEach((v, i) => {
+      if (v == null) return;
+      if (hollow.has(i)) svg += `<circle cx="${xAt(i)}" cy="${yAt(v)}" r="4" style="fill:var(--paper-raised);stroke:${s.color}" stroke-width="2" pointer-events="none"/>`;
+      else if (markers) svg += `<circle cx="${xAt(i)}" cy="${yAt(v)}" r="3.5" style="fill:${s.color}" pointer-events="none"/>`;
     });
   });
 
-  svg += `</svg>`;
-  document.getElementById(containerId).innerHTML = svg;
-  
-  // Add tooltip functionality
+  annotations.forEach((a) => {
+    if (a.v == null) return;
+    const x = xAt(a.i), y = yAt(a.v);
+    const anchor = x > W - padR - 70 ? 'end' : x < padL + 70 ? 'start' : 'middle';
+    const ty = a.below ? y + 20 : y - 12 < padT ? y + 20 : y - 12;
+    if (!a.noDot) svg += `<circle cx="${x}" cy="${y}" r="5" style="fill:${a.color};stroke:var(--paper-raised)" stroke-width="2" pointer-events="none"/>`;
+    svg += `<text x="${x}" y="${ty}" text-anchor="${anchor}" class="annot" style="fill:${a.color}">${esc(a.text)}</text>`;
+  });
+
+  // Hover targets go last so they sit on top
+  series.forEach((s) => s.data.forEach((v, i) => {
+    if (v == null) return;
+    svg += `<circle cx="${xAt(i)}" cy="${yAt(v)}" r="9" fill="transparent" class="chart-point" data-label="${esc(tips[i])}" data-value="${v.toFixed(1)}" data-series="${esc(series.length > 1 ? s.name : '')}"/>`;
+  }));
+
+  svg += '</svg>';
+  el.innerHTML = svg;
   addChartTooltip(containerId);
 }
 
-function renderBarChart(containerId, { labels, values, yMin, yMax, color }) {
-  const W = 900, H = 220, padL = 40, padR = 14, padT = 14, padB = 28;
+function renderBarChart(containerId, { labels, values, tips, yMin, yMax, colors, strong = new Set() }) {
+  const { el, W, H } = chartBox(containerId);
+  const padL = 44, padR = 14, padT = 22, padB = 30;
   const innerW = W - padL - padR, innerH = H - padT - padB;
   const n = labels.length;
   const slot = innerW / n;
-  const barW = slot * 0.56;
+  const barW = Math.min(48, slot * 0.62);
   const yAt = (v) => padT + innerH * (1 - (v - yMin) / (yMax - yMin));
   const base = padT + innerH;
 
-  const tickCount = 4;
-  const ticks = Array.from({ length: tickCount }, (_, i) => yMin + (yMax - yMin) * (i / (tickCount - 1)));
-
-  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="${SVGNS}">`;
-  ticks.forEach((t) => {
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  niceTicks(yMin, yMax).forEach((t) => {
     const y = yAt(t);
-    svg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" style="stroke:var(--line)" stroke-width="1"/>`;
-    svg += `<text x="${padL - 8}" y="${y + 3}" text-anchor="end" font-size="10" style="fill:var(--muted)">${NUMFMT(t)}%</text>`;
+    svg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" class="grid"/>`;
+    svg += `<text x="${padL - 8}" y="${y + 4}" text-anchor="end" class="axis">${t}%</text>`;
   });
 
   values.forEach((v, i) => {
     const cx = padL + slot * (i + 0.5);
+    svg += `<text x="${cx}" y="${H - padB + 19}" text-anchor="middle" class="axis">${esc(labels[i])}</text>`;
+    if (v == null) return;
     const y = yAt(v);
-    const h = base - y;
-    svg += `<rect x="${cx - barW / 2}" y="${y}" width="${barW}" height="${h}" rx="2" 
-            class="chart-bar" data-label="${labels[i]}" data-value="${NUMFMT(v)}"
-            style="fill:${color}" opacity="0.85"/>`;
-    svg += `<text x="${cx}" y="${H - padB + 16}" text-anchor="middle" font-size="10" style="fill:var(--muted)">${labels[i]}</text>`;
+    const isStrong = strong.has(i);
+    svg += `<rect x="${cx - barW / 2}" y="${y}" width="${barW}" height="${Math.max(0, base - y)}" rx="2"
+            class="chart-bar" data-label="${esc((tips || labels)[i])}" data-value="${v.toFixed(1)}"
+            style="fill:${colors[i]}" opacity="${isStrong ? 1 : 0.7}"/>`;
+    if (slot >= 34 || isStrong) {
+      svg += `<text x="${cx}" y="${y - 6}" text-anchor="middle" class="val${isStrong ? ' strong' : ''}">${v.toFixed(1)}</text>`;
+    }
   });
 
-  svg += `</svg>`;
-  document.getElementById(containerId).innerHTML = svg;
-  
-  // Add tooltip functionality
+  svg += '</svg>';
+  el.innerHTML = svg;
   addChartTooltip(containerId);
 }
 
 function addChartTooltip(containerId) {
-  const container = document.getElementById(containerId);
+  const container = $(containerId);
   const chartWrap = container.closest('.chart-wrap');
-  
-  // Remove existing tooltip if any
-  const existingTooltip = chartWrap.querySelector('.chart-tooltip');
-  if (existingTooltip) {
-    existingTooltip.remove();
-  }
-  
-  // Create tooltip element
+  const existing = chartWrap.querySelector('.chart-tooltip');
+  if (existing) existing.remove();
+
   const tooltip = document.createElement('div');
   tooltip.className = 'chart-tooltip';
-  tooltip.innerHTML = `
-    <div class="tooltip-label"></div>
-    <div class="tooltip-value"></div>
-  `;
+  tooltip.innerHTML = '<div class="tooltip-label"></div><div class="tooltip-value"></div>';
   chartWrap.appendChild(tooltip);
-  
-  // Add hover event listeners to interactive elements
-  const interactiveElements = container.querySelectorAll('.chart-point, .chart-bar');
-  
-  interactiveElements.forEach(element => {
+
+  container.querySelectorAll('.chart-point, .chart-bar').forEach((element) => {
     element.addEventListener('mouseenter', (e) => {
-      const label = e.target.dataset.label;
-      const value = e.target.dataset.value;
-      const series = e.target.dataset.series;
-      
-      if (series && series !== '') {
-        // Multi-series chart
-        tooltip.querySelector('.tooltip-label').textContent = series;
-        tooltip.querySelector('.tooltip-value').textContent = `${label}: ${value}%`;
-      } else {
-        // Single series chart
-        tooltip.querySelector('.tooltip-label').textContent = label;
-        tooltip.querySelector('.tooltip-value').textContent = `${value}%`;
-      }
+      const { label, value, series } = e.target.dataset;
+      tooltip.querySelector('.tooltip-label').textContent = series || label;
+      tooltip.querySelector('.tooltip-value').textContent = series ? `${label}: ${value}%` : `${value}%`;
       tooltip.classList.add('visible');
     });
-    
     element.addEventListener('mousemove', (e) => {
       const rect = chartWrap.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      // Position tooltip near the mouse but keep it within bounds
-      tooltip.style.left = `${Math.min(x + 10, rect.width - tooltip.offsetWidth - 10)}px`;
-      tooltip.style.top = `${Math.max(y - tooltip.offsetHeight - 10, 10)}px`;
+      const x = e.clientX - rect.left, y = e.clientY - rect.top;
+      tooltip.style.left = `${Math.max(0, Math.min(x + 12, rect.width - tooltip.offsetWidth - 4))}px`;
+      tooltip.style.top = `${Math.max(y - tooltip.offsetHeight - 12, 4)}px`;
     });
-    
-    element.addEventListener('mouseleave', () => {
-      tooltip.classList.remove('visible');
-    });
+    element.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
   });
 }
 </script>
